@@ -1,32 +1,48 @@
 package cz.masci.javafx.demo;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  *
  * @author Daniel
  */
 public class Monster {
-  private String name;
-  private String description;
+  private StringProperty name;
+  private StringProperty description;
 
   public Monster(String name, String description) {
-    this.name = name;
-    this.description = description;
+    nameProperty().set(name);
+    descriptionProperty().set(description);
   }
 
+  public final StringProperty nameProperty() {
+    if (name == null) {
+      name = new SimpleStringProperty();
+    }
+    return name;
+  }
+  
+  public final StringProperty descriptionProperty() {
+    if (description == null) {
+      description = new SimpleStringProperty();
+    }
+    return description;    
+  }
   
   public String getName() {
-    return name;
+    return nameProperty().get();
   }
 
   public void setName(String name) {
-    this.name = name;
+    nameProperty().set(name);
   }
 
   public String getDescription() {
-    return description;
+    return descriptionProperty().get();
   }
 
   public void setDescription(String description) {
-    this.description = description;
+    descriptionProperty().set(description);
   }
 }
