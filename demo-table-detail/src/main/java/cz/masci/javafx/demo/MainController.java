@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 
 public class MainController {
   @FXML
@@ -18,10 +19,25 @@ public class MainController {
   private TableColumn<Monster, String> description;
 
   @FXML
+  private VBox details;
+  
+  // Name of this class has to be prefixed by the name of VBox variable. Means root node of the included fxml
+  @FXML
+  private DetailController detailsController;
+          
+  @FXML
   public void initialize() {
       tableView.setItems(getMonsters());
       name.setCellValueFactory(new PropertyValueFactory<>("name"));
       description.setCellValueFactory(new PropertyValueFactory<>("description"));
+      
+      tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        Monster monster = null;
+        if (newValue != null) {
+          monster = newValue;
+        }
+        detailsController.setMonster(monster);
+      });
   }
   
   private ObservableList<Monster> getMonsters() {
