@@ -36,8 +36,10 @@ public class DetailController {
     } else {
       name.setText(monster.getName());
       description.setText(monster.getDescription());
-      listener = (observable, oldValue, newValue)
-              -> monster.setDescription(newValue);
+      listener = (observable, oldValue, newValue) -> {
+        monster.setDescription(newValue);
+        monster.setEdited(true);
+      };
       description.textProperty().addListener(listener);
     }
   }

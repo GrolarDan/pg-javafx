@@ -1,5 +1,7 @@
 package cz.masci.javafx.demo;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -10,6 +12,7 @@ import javafx.beans.property.StringProperty;
 public class Monster {
   private StringProperty name;
   private StringProperty description;
+  private BooleanProperty edited; // TODO: change to modified
 
   public Monster(String name, String description) {
     nameProperty().set(name);
@@ -30,6 +33,13 @@ public class Monster {
     return description;    
   }
   
+  public final BooleanProperty editedProperty() {
+    if (edited == null) {
+      edited = new SimpleBooleanProperty(false);
+    }
+    return edited;
+  }
+  
   public String getName() {
     return nameProperty().get();
   }
@@ -44,5 +54,13 @@ public class Monster {
 
   public void setDescription(String description) {
     descriptionProperty().set(description);
+  }
+  
+  public Boolean isEdited() {
+    return editedProperty().get();
+  }
+  
+  public void setEdited(boolean edited) {
+    editedProperty().set(edited);
   }
 }
