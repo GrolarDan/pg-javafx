@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.masci.javafx.demo;
+package cz.masci.javafx.demo.service;
 
+import cz.masci.javafx.demo.dto.MonsterDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -25,10 +26,10 @@ import javafx.collections.ObservableList;
  */
 public class MonsterService {
 
-  public ObservableList<Monster> getMonsters() {
-    ObservableList<Monster> monsters = FXCollections.observableArrayList();
+  public ObservableList<MonsterDTO> getMonsters() {
+    ObservableList<MonsterDTO> monsters = FXCollections.observableArrayList();
     for (int i = 0; i < 100; i++) {
-      monsters.add(new Monster("Monster " + i, String.format("Description %d lorem ipsum", i)));
+      monsters.add(new MonsterDTO("Monster " + i, String.format("Description %d lorem ipsum", i)));
     }
 
     return monsters;

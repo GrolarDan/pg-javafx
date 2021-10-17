@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.masci.javafx.demo.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.masci.javafx.demo.directdetail.PrimaryController">
    <left>
       <VBox prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <children>
@@ -20,11 +20,14 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
-            <TableView fx:id="tableView">
+            <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
               <columns>
                 <TableColumn fx:id="name" editable="false" prefWidth="100.0" text="Name" />
                 <TableColumn fx:id="description" editable="false" prefWidth="200.0" text="Description" />
               </columns>
+               <VBox.margin>
+                  <Insets bottom="20.0" left="20.0" />
+               </VBox.margin>
             </TableView>
          </children>
       </VBox>

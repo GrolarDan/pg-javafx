@@ -1,4 +1,4 @@
-package cz.masci.javafx.demo;
+package cz.masci.javafx.demo.dto;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,12 +9,12 @@ import javafx.beans.property.StringProperty;
  *
  * @author Daniel
  */
-public class Monster {
+public class MonsterDTO {
   private StringProperty name;
   private StringProperty description;
   private BooleanProperty edited; // TODO: change to modified
 
-  public Monster(String name, String description) {
+  public MonsterDTO(String name, String description) {
     nameProperty().set(name);
     descriptionProperty().set(description);
   }
