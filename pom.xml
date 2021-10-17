@@ -21,6 +21,9 @@
     
     <javafx.version>17.0.0.1</javafx.version>
     <javafx.plugin.version>0.0.6</javafx.plugin.version>
+    
+    <projectlombok.version>1.18.20</projectlombok.version>
+    <slf4j.version>1.7.32</slf4j.version>
   </properties>
       
   
@@ -36,9 +39,40 @@
         <artifactId>javafx-fxml</artifactId>
         <version>${javafx.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${projectlombok.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>
+  </dependencies>
+    
   <build>
     <pluginManagement>
       <plugins>
