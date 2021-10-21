@@ -1,5 +1,6 @@
 package cz.masci.javafx.demo.dto;
 
+import cz.masci.javafx.demo.servicedetail.Modifiable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,7 +10,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author Daniel
  */
-public class MonsterDTO {
+public class MonsterDTO implements Modifiable {
   private StringProperty name;
   private StringProperty description;
   private BooleanProperty edited; // TODO: change to modified
