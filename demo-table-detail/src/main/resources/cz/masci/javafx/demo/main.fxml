@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane prefHeight="443.0" prefWidth="601.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.masci.javafx.demo.MainController">
+   <center>
+      <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab closable="false" text="Direct Detail">
+            <fx:include fx:id="directDetail" source="directdetail/primary.fxml" />
+          </Tab>
+          <Tab closable="false" text="Abstract Detail">
+            <fx:include fx:id="abstractDetail" source="abstractdetail/primary.fxml" />
+          </Tab>
+          <Tab closable="false" text="Service Detail">
+            <fx:include fx:id="serviceDetail" source="servicedetail/primary.fxml" />
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>
