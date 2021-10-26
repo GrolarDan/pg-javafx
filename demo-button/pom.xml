@@ -10,6 +10,7 @@
   <groupId>cz.masci.javafx</groupId>
   <artifactId>demo-button</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <name>DEMO: Button</name>
   
   <properties>
   </properties>

@@ -11,6 +11,7 @@
   <groupId>cz.masci.javafx</groupId>
   <artifactId>demo-table-detail</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <name>DEMO: Table Detail</name>
   
   <properties>
   </properties>
