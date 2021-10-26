@@ -127,6 +127,7 @@
   <modules>
     <module>demo-button</module>
     <module>demo-table-detail</module>
+    <module>demo-springfx-crud</module>
   </modules>
   
 </project>
