@@ -27,7 +27,7 @@ import javafx.collections.ObservableMap;
  */
 public class ModifiableService {
 
-  private final ObservableMap<Class<?>, ObservableList<Modifiable>> modifiedMap;
+  private final ObservableMap<String, ObservableList<Modifiable>> modifiedMap;
 
   private static final ModifiableService INSTANCE = new ModifiableService();
   
@@ -44,17 +44,25 @@ public class ModifiableService {
       return;
     }
     
-    var modifiedList = getModifiedList(item.getClass());
-    // add new item
-    modifiedList.add(item);
+    add(item.getClass().getSimpleName(), item);
   }
 
+  public <T extends Modifiable> void add(String key, T item) {
+    var modifiedList = getModifiedList(key);
+    // add new item
+    modifiedList.add(item);    
+  }
+  
   public <T extends Modifiable> void remove(T item) {
     if (item == null) {
       return;
     }
     
-    var modifiedList = getModifiedList(item.getClass());
+    remove(item.getClass().getSimpleName(), item);
+  }
+  
+  public <T extends Modifiable> void remove(String key, T item) {
+    var modifiedList = getModifiedList(key);
     // remove item
     modifiedList.remove(item);
   }
@@ -64,32 +72,44 @@ public class ModifiableService {
       return false;
     }
     
-    var modifiedList = getModifiedList(item.getClass());
+    return contains(item.getClass().getSimpleName(), item);
+  }
+  
+  public <T extends Modifiable> boolean contains(String key, T item) {
+    var modifiedList = getModifiedList(key);
     
     return modifiedList.contains(item);
   }
   
   public <T extends Modifiable> void addListener(Class<T> clazz, ListChangeListener<T> changeListener) {
-    ObservableList modifiedList = getModifiedList(clazz);
+    addListener(clazz.getSimpleName(), changeListener);
+  }
+  
+  public <T extends Modifiable> void addListener(String key, ListChangeListener<T> changeListener) {
+    ObservableList modifiedList = getModifiedList(key);
     
     modifiedList.addListener(changeListener);
     
   }
   
   public <T extends Modifiable> void removeListener(Class<T> clazz, ListChangeListener<T> changeListener) {
-    ObservableList modifiedList = getModifiedList(clazz);
+    removeListener(clazz.getSimpleName(), changeListener);
+  }
+  
+  public <T extends Modifiable> void removeListener(String key, ListChangeListener<T> changeListener) {
+    ObservableList modifiedList = getModifiedList(key);
     
     modifiedList.removeListener(changeListener);
     
   }
   
-  private <T extends Modifiable> ObservableList<Modifiable> getModifiedList(Class<T> clazz) {
-    var modifiedList = modifiedMap.get(clazz);
+  private <T extends Modifiable> ObservableList<Modifiable> getModifiedList(String key) {
+    var modifiedList = modifiedMap.get(key);
 
     // check list existence
     if (modifiedList == null) {
       modifiedList = FXCollections.observableArrayList();
-      modifiedMap.put(clazz, modifiedList);
+      modifiedMap.put(key, modifiedList);
     }
 
     return modifiedList;
