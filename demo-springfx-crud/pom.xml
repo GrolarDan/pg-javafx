@@ -25,7 +25,9 @@
     <project.buils.sourceEncoding>UTF-8</project.buils.sourceEncoding>
 
     <javafx.weaver.version>1.3.0</javafx.weaver.version>
-    <javafx.version>17</javafx.version>
+    <javafx.version>17.0.0.1</javafx.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
     
   <dependencies>

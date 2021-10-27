@@ -17,12 +17,15 @@
 package cz.masci.javafx.demo;
 
 import cz.masci.javafx.demo.controller.MainController;
+import cz.masci.javafx.demo.controller.MasterViewController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,7 +53,10 @@ public class JavaFxApplication extends Application {
   public void start(Stage stage) throws Exception {
     log.info("START - JavaFxApplication");
     FxWeaver fxWeaver = applicationContext.getBean(FxWeaver.class);
+//    FxControllerAndView<MainController, Parent> mainView = fxWeaver.load(MainController.class);
+//    mainView.getController().initialize();
     Parent root = fxWeaver.loadView(MainController.class);
+//    Parent root = mainView.getView().get();
     Scene scene = new Scene(root);
     stage.setScene(scene);
     stage.show();

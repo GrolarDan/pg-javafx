@@ -16,13 +16,15 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.dto.MonsterDTO;
+import cz.masci.javafx.demo.service.MonsterService;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.rgielen.fxweaver.core.FxControllerAndView;
-import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 
@@ -33,19 +35,29 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@FxmlView("main-scene.fxml")
-public class MainController {
+@FxmlView("master-view.fxml")
+public class MasterViewController {
 
-  private final FxWeaver fxWeaver;
-          
+  private final MonsterService monsterService;
+
   @FXML
-  private Tab tabMonster;
-  
+  private TableView<MonsterDTO> tableView;
+
+  @FXML
+  private TableColumn<MonsterDTO, String> name;
+
+  @FXML
+  private TableColumn<MonsterDTO, String> description;
+
+  @FXML
+  private VBox details;
+
   @FXML
   public void initialize() {
     log.info("initialize");
-    FxControllerAndView<MasterViewController, BorderPane> masterView = fxWeaver.load(MasterViewController.class);
-//    masterView.getController().initialize();
-    tabMonster.setContent(masterView.getView().get());
+    tableView.setItems(monsterService.getMonsters());
+    name.setCellValueFactory(new PropertyValueFactory<>("name"));
+    description.setCellValueFactory(new PropertyValueFactory<>("description"));
   }
+
 }
