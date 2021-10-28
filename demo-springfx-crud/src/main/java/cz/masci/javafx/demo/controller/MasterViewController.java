@@ -20,6 +20,7 @@ import cz.masci.javafx.demo.service.Modifiable;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -35,6 +36,9 @@ import net.rgielen.fxweaver.core.FxmlView;
 @FxmlView("master-view.fxml")
 public abstract class MasterViewController<T extends Modifiable> {
 
+  @FXML
+  protected BorderPane borderPane;
+  
   @FXML
   protected TableView<T> tableView;
 
