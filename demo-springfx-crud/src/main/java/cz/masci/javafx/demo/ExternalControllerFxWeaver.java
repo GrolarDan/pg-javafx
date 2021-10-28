@@ -18,9 +18,11 @@ package cz.masci.javafx.demo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.util.Callback;
@@ -35,21 +37,22 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
- * This class extends FxWeaver to be able load fxml files without and only without controller specification fx:controller.
- * It set FXMLLoader controller before loading.
- * 
+ * This class extends FxWeaver to be able load fxml files without and only
+ * without controller specification fx:controller. It set FXMLLoader controller
+ * before loading.
+ *
  * @author Daniel
  */
 @Component
 @Slf4j
-public class NoControllerFxWeaver extends FxWeaver {
+public class ExternalControllerFxWeaver extends FxWeaver {
 
   private final Callback<Class<?>, Object> beanFactory;
-  
+
   @Autowired
-  public NoControllerFxWeaver(ConfigurableApplicationContext context) {
+  public ExternalControllerFxWeaver(ConfigurableApplicationContext context) {
     super(context::getBean, context::close);
-    
+
     beanFactory = (requiredType) -> context.getBean(requiredType);
   }
 
@@ -105,22 +108,50 @@ public class NoControllerFxWeaver extends FxWeaver {
       if (resourceBundle != null) {
         loader.setResources(resourceBundle);
       }
-      
+
       C controller = getBean(controllerClass);
       loader.setController(controller);
       V view = loader.load(fxmlStream);
 
-//      C controller = loader.getController();     
-//      if (controller == null) {
-//        controller = getBean(controllerClass);
-//        loader.setController(controller);
-//        view = loader.load(fxmlStream);
-//      }
-      
       return SimpleFxControllerAndView.of(controller, view);
     } catch (IOException e) {
       throw new FxLoadException("Unable to load FXML file " + url, e);
     }
   }
 
+  /**
+   * Build a FXML view location reference for controller classes, based on
+   * {@link FxmlView} annotation or simple classname.
+   *
+   * @param c The class to build a FXML location for. If it does not contain a
+   * {@link FxmlView} annotation to specify resource to load, it is assumed that
+   * the view resides in the same package, named {c.getSimpleName()}.fxml
+   * @return a resource location suitable for loading by
+   * {@link Class#getResource(String)}
+   */
+  @Override
+  protected String buildFxmlReference(Class<?> c) {
+    return Optional.ofNullable(getAnnotation(c))
+            .map(FxmlView::value)
+            .map(s -> s.isEmpty() ? null : s)
+            .orElse(c.getSimpleName() + ".fxml");
+  }
+
+  /**
+   * Get the {@link FxmlView} annotation from the class. If it does not contain a
+   * {@link FxmlView} annotation, it search in super class.
+   * If there is no super class it returns null.
+   *
+   * @param c The class to get a {@link FxmlView} annotation from
+   * @return a {@link FxmlView}
+   */
+  private FxmlView getAnnotation(Class<?> c) {
+    // there is no other superclass
+    if (c == null) {
+      return null;
+    }
+    
+    return Optional.ofNullable(c.getAnnotation(FxmlView.class))
+            .orElseGet(() -> getAnnotation(c.getSuperclass()));
+  }
 }

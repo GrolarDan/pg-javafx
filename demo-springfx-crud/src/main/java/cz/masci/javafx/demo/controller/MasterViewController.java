@@ -16,48 +16,40 @@
  */
 package cz.masci.javafx.demo.controller;
 
-import cz.masci.javafx.demo.dto.MonsterDTO;
-import cz.masci.javafx.demo.service.MonsterService;
+import cz.masci.javafx.demo.service.Modifiable;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
-import org.springframework.stereotype.Component;
 
 /**
- *
+ * This is abstract controller for Master View editor with list of items.
+ * 
  * @author Daniel
+ * 
+ * @param <T>
  */
-@Component
 @Slf4j
-@RequiredArgsConstructor
 @FxmlView("master-view.fxml")
-public class MasterViewController {
-
-  private final MonsterService monsterService;
+public abstract class MasterViewController<T extends Modifiable> {
 
   @FXML
-  private TableView<MonsterDTO> tableView;
+  protected TableView<T> tableView;
 
   @FXML
-  private TableColumn<MonsterDTO, String> name;
+  protected VBox items;
 
   @FXML
-  private TableColumn<MonsterDTO, String> description;
-
+  protected Label tableTitle;
+  
   @FXML
-  private VBox details;
-
-  @FXML
-  public void initialize() {
-    log.info("initialize");
-    tableView.setItems(monsterService.getMonsters());
-    name.setCellValueFactory(new PropertyValueFactory<>("name"));
-    description.setCellValueFactory(new PropertyValueFactory<>("description"));
+  protected Label viewTitle;
+  
+  public final void initialize() {
+    init();
   }
 
+  protected abstract void init();
 }

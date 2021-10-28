@@ -17,7 +17,7 @@
 package cz.masci.javafx.demo;
 
 import cz.masci.javafx.demo.controller.MainController;
-import cz.masci.javafx.demo.controller.MasterViewController;
+import cz.masci.javafx.demo.controller.MonsterViewController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
