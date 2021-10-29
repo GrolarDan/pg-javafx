@@ -17,7 +17,9 @@
 package cz.masci.javafx.demo.controller;
 
 import cz.masci.javafx.demo.dto.MonsterDTO;
+import cz.masci.javafx.demo.service.ModifiableService;
 import cz.masci.javafx.demo.service.MonsterService;
+import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -41,11 +43,10 @@ public class MonsterViewController extends MasterViewController<MonsterDTO> {
 
   private final FxWeaver fxWeaver;
   private final MonsterService monsterService;
+  private final ModifiableService modifiableService;
 
-  @FXML
   private TableColumn<MonsterDTO, String> name;
 
-  @FXML
   private TableColumn<MonsterDTO, String> description;
 
   @Override
@@ -75,6 +76,8 @@ public class MonsterViewController extends MasterViewController<MonsterDTO> {
       detailView.getController().setItem(newValue);
     });
 
+    var rowFactory = new StyleChangingRowFactory<MonsterDTO>("edited-row", MonsterDTO.class, modifiableService);
+    tableView.setRowFactory(rowFactory);
   }
 
 }
