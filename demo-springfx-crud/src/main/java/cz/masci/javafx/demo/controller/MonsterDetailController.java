@@ -43,7 +43,7 @@ public class MonsterDetailController extends DetailViewController<MonsterDTO> {
   private TextArea description;
 
   public MonsterDetailController(ModifiableService modifiableService) {
-    super(modifiableService);
+    super(MonsterDTO.class.getSimpleName(), modifiableService);
   }
   
   @Override
@@ -57,7 +57,7 @@ public class MonsterDetailController extends DetailViewController<MonsterDTO> {
 
   @Override
   protected void fillInputs(MonsterDTO item) {
-    log.info("Filling inputs {}", item.getName());
+    log.info("Filling inputs {}", item);
 
     if (item == null) {
       name.setText("");

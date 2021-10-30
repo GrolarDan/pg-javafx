@@ -41,8 +41,8 @@ public class MonsterMasterController extends MasterViewController<MonsterDTO> {
 
   private TableColumn<MonsterDTO, String> description;
 
-  public MonsterMasterController(MonsterService monsterService, FxWeaver fxWeaver, ModifiableService modifiableService) {
-    super(fxWeaver, modifiableService);
+  public MonsterMasterController(MonsterService monsterService, FxWeaver fxWeaver) {
+    super(fxWeaver);
     this.monsterService = monsterService;
   }
 

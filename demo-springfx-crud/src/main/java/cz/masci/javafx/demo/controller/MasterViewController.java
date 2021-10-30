@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is abstract controller for Master View editor with list of items.
@@ -47,7 +48,7 @@ import net.rgielen.fxweaver.core.FxmlView;
 public abstract class MasterViewController<T extends Modifiable> {
 
   private final FxWeaver fxWeaver;
-  private final ModifiableService modifiableService;
+  private ModifiableService modifiableService;
 
   @FXML
   protected BorderPane borderPane;
@@ -63,6 +64,11 @@ public abstract class MasterViewController<T extends Modifiable> {
 
   @FXML
   protected Label viewTitle;
+
+  @Autowired
+  public final void setModifiableService(ModifiableService modifiableService) {
+    this.modifiableService = modifiableService;
+  }
 
   public final void initialize() {
     init();

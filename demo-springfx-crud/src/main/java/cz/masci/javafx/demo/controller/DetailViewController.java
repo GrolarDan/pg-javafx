@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public abstract class DetailViewController<T extends Modifiable> {
 
+  private final String modifiableKey;
   private final ModifiableService modifiableService;
 
   private List<ObservableValue<String>> observableValues;
@@ -63,7 +64,7 @@ public abstract class DetailViewController<T extends Modifiable> {
     } else {
       listener = (observable, oldValue, newValue) -> {
         changed(observable, oldValue, newValue);
-        modifiableService.add(item);
+        modifiableService.add(modifiableKey, item);
       };
       getObservableValues().forEach(t -> t.addListener(listener));
     }
@@ -75,7 +76,7 @@ public abstract class DetailViewController<T extends Modifiable> {
     }
     return observableValues;
   }
-
+  
   protected abstract List<ObservableValue<String>> initObservableValues();
 
   protected abstract void fillInputs(T item);
