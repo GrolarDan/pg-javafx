@@ -45,7 +45,7 @@ public class MainController {
   public void initialize() {
     log.info("initialize");
 
-    FxControllerAndView<MonsterViewController, BorderPane> masterView = fxWeaver.load(MonsterViewController.class);
+    FxControllerAndView<MonsterMasterController, BorderPane> masterView = fxWeaver.load(MonsterMasterController.class);
     
     tabMonster.setContent(masterView.getView().get());
   }

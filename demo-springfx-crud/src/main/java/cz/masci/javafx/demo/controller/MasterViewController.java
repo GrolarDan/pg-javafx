@@ -16,29 +16,42 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.dto.MonsterDTO;
 import cz.masci.javafx.demo.service.Modifiable;
+import cz.masci.javafx.demo.service.ModifiableService;
+import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.rgielen.fxweaver.core.FxControllerAndView;
+import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 
 /**
  * This is abstract controller for Master View editor with list of items.
- * 
+ *
  * @author Daniel
- * 
+ *
  * @param <T>
  */
 @Slf4j
+@RequiredArgsConstructor
 @FxmlView("master-view.fxml")
 public abstract class MasterViewController<T extends Modifiable> {
 
+  private final FxWeaver fxWeaver;
+  private final ModifiableService modifiableService;
+
   @FXML
   protected BorderPane borderPane;
-  
+
   @FXML
   protected TableView<T> tableView;
 
@@ -47,13 +60,59 @@ public abstract class MasterViewController<T extends Modifiable> {
 
   @FXML
   protected Label tableTitle;
-  
+
   @FXML
   protected Label viewTitle;
-  
+
   public final void initialize() {
     init();
+    tableView.setItems(getItems());
   }
 
+  protected void setViewTitle(String title) {
+    viewTitle.setText(title);
+  }
+
+  protected void setTableTitle(String title) {
+    tableTitle.setText(title);
+  }
+
+  public void clearCollumns() {
+    tableView.getColumns().clear();
+  }
+
+  public void addCollumns(TableColumn<T, ?>... collumns) {
+    tableView.getColumns().addAll(collumns);
+  }
+
+  public <E extends DetailViewController<T>> void setDetailController(Class<E> detailController) {
+    setDetailController(detailController, detailController.getSimpleName());
+  }
+
+  public <E extends DetailViewController<T>> void setDetailController(Class<E> detailController, String modifiableKey) {
+    FxControllerAndView<E, Node> detailView = fxWeaver.load(detailController);
+
+    borderPane.setCenter(detailView.getView().get());
+
+    tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+      detailView.getController().setItem(newValue);
+    });
+
+  }
+
+  protected void setRowFactory(String styleClass, Class<T> clazz) {
+    setRowFactory(styleClass, clazz.getSimpleName());
+  }
+
+  protected void setRowFactory(String styleClass, String modifiableKey) {
+    tableView.setRowFactory(new StyleChangingRowFactory<>(styleClass, modifiableKey, modifiableService));
+  }
+
+  /**
+   * Delegate titles and collumns initialization to subclass.
+   */
   protected abstract void init();
+
+  protected abstract ObservableList<T> getItems();
+
 }

@@ -20,15 +20,10 @@ import cz.masci.javafx.demo.dto.MonsterDTO;
 import cz.masci.javafx.demo.service.ModifiableService;
 import cz.masci.javafx.demo.service.MonsterService;
 import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
-import java.util.List;
-import javafx.fxml.FXML;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.stereotype.Component;
 
@@ -38,23 +33,25 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@RequiredArgsConstructor
-public class MonsterViewController extends MasterViewController<MonsterDTO> {
+public class MonsterMasterController extends MasterViewController<MonsterDTO> {
 
-  private final FxWeaver fxWeaver;
   private final MonsterService monsterService;
-  private final ModifiableService modifiableService;
 
   private TableColumn<MonsterDTO, String> name;
 
   private TableColumn<MonsterDTO, String> description;
 
+  public MonsterMasterController(MonsterService monsterService, FxWeaver fxWeaver, ModifiableService modifiableService) {
+    super(fxWeaver, modifiableService);
+    this.monsterService = monsterService;
+  }
+
   @Override
   protected void init() {
     log.info("initialize");
 
-    tableTitle.setText("List of Monsters");
-    viewTitle.setText("Monsters");
+    setTableTitle("List of Monsters");
+    setViewTitle("Monsters");
 
     name = new TableColumn<>("Name");
     name.setPrefWidth(100.0);
@@ -64,20 +61,15 @@ public class MonsterViewController extends MasterViewController<MonsterDTO> {
     description.setPrefWidth(200.0);
     description.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-    tableView.getColumns().addAll(List.of(name, description));
+    addCollumns(name, description);
 
-    tableView.setItems(monsterService.getMonsters());
-
-    FxControllerAndView<MonsterDetailController, VBox> detailView = fxWeaver.load(MonsterDetailController.class);
-
-    borderPane.setCenter(detailView.getView().get());
-
-    tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      detailView.getController().setItem(newValue);
-    });
-
-    var rowFactory = new StyleChangingRowFactory<MonsterDTO>("edited-row", MonsterDTO.class, modifiableService);
-    tableView.setRowFactory(rowFactory);
+    setDetailController(MonsterDetailController.class);
+    setRowFactory("edited-row", MonsterDTO.class);
   }
 
+  @Override
+  protected ObservableList<MonsterDTO> getItems() {
+    return monsterService.getMonsters();
+  }
+  
 }
