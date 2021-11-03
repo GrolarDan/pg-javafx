@@ -18,11 +18,9 @@ package cz.masci.javafx.demo;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Stream;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.util.Callback;

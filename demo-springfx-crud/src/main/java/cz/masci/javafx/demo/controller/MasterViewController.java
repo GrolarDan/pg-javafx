@@ -21,8 +21,12 @@ import cz.masci.javafx.demo.service.Modifiable;
 import cz.masci.javafx.demo.service.ModifiableService;
 import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -64,6 +68,21 @@ public abstract class MasterViewController<T extends Modifiable> {
 
   @FXML
   protected Label viewTitle;
+
+  @FXML
+  public void onNewItem(ActionEvent event) {
+    FxControllerAndView<MonsterEditController, DialogPane> editor = fxWeaver.load(MonsterEditController.class);
+    Dialog<ButtonType> dialog = new Dialog<>();
+    dialog.setTitle("New Item");
+    dialog.setDialogPane(editor.getView().get());
+    dialog.showAndWait()
+            .filter(ButtonType.OK::equals)
+            .ifPresent(action -> {
+              MonsterEditController controller = editor.getController();
+              var item = (T) new MonsterDTO(controller.getName().getText(), controller.getDescription().getText());
+              tableView.getItems().add(item);
+            });
+  }
 
   @Autowired
   public final void setModifiableService(ModifiableService modifiableService) {
