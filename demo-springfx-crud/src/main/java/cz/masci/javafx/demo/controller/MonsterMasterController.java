@@ -17,10 +17,7 @@
 package cz.masci.javafx.demo.controller;
 
 import cz.masci.javafx.demo.dto.MonsterDTO;
-import cz.masci.javafx.demo.service.ModifiableService;
-import cz.masci.javafx.demo.service.MonsterService;
-import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
-import javafx.collections.ObservableList;
+import cz.masci.javafx.demo.service.ItemService;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +32,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MonsterMasterController extends MasterViewController<MonsterDTO> {
 
-  private final MonsterService monsterService;
-
   private TableColumn<MonsterDTO, String> name;
 
   private TableColumn<MonsterDTO, String> description;
 
-  public MonsterMasterController(MonsterService monsterService, FxWeaver fxWeaver) {
-    super(fxWeaver);
-    this.monsterService = monsterService;
+  public MonsterMasterController(FxWeaver fxWeaver, ItemService<MonsterDTO> itemService) {
+    super(fxWeaver, itemService, MonsterEditController.class);
   }
 
   @Override
@@ -67,9 +61,4 @@ public class MonsterMasterController extends MasterViewController<MonsterDTO> {
     setRowFactory("edited-row", MonsterDTO.class);
   }
 
-  @Override
-  protected ObservableList<MonsterDTO> getItems() {
-    return monsterService.getMonsters();
-  }
-  
 }

@@ -17,9 +17,9 @@
 package cz.masci.javafx.demo.service.impl;
 
 import cz.masci.javafx.demo.dto.MonsterDTO;
+import cz.masci.javafx.demo.service.ItemService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import cz.masci.javafx.demo.service.MonsterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +29,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class MonsterServiceImpl implements MonsterService {
+public class MonsterServiceImpl implements ItemService<MonsterDTO> {
 
   @Override
-  public ObservableList<MonsterDTO> getMonsters() {
+  public ObservableList<MonsterDTO> getItems() {
     log.info("Loading Monsters ...");
     ObservableList<MonsterDTO> monsters = FXCollections.observableArrayList();
     for (int i = 0; i < 100; i++) {
@@ -40,6 +40,11 @@ public class MonsterServiceImpl implements MonsterService {
     }
 
     return monsters;
+  }
+
+  @Override
+  public MonsterDTO addItem(MonsterDTO item) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
 }

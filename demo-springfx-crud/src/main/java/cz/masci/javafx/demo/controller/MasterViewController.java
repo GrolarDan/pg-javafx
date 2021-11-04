@@ -17,6 +17,8 @@
 package cz.masci.javafx.demo.controller;
 
 import cz.masci.javafx.demo.dto.MonsterDTO;
+import cz.masci.javafx.demo.service.EditControllerService;
+import cz.masci.javafx.demo.service.ItemService;
 import cz.masci.javafx.demo.service.Modifiable;
 import cz.masci.javafx.demo.service.ModifiableService;
 import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
@@ -52,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class MasterViewController<T extends Modifiable> {
 
   private final FxWeaver fxWeaver;
+  private final ItemService itemService;
+  private final Class<? extends EditControllerService<T>> editControllerClass;
   private ModifiableService modifiableService;
 
   @FXML
@@ -71,16 +75,16 @@ public abstract class MasterViewController<T extends Modifiable> {
 
   @FXML
   public void onNewItem(ActionEvent event) {
-    FxControllerAndView<MonsterEditController, DialogPane> editor = fxWeaver.load(MonsterEditController.class);
-    Dialog<ButtonType> dialog = new Dialog<>();
+    FxControllerAndView<? extends EditControllerService<T>, DialogPane> editor = fxWeaver.load(editControllerClass);
+    Dialog<T> dialog = new Dialog<>();
     dialog.setTitle("New Item");
     dialog.setDialogPane(editor.getView().get());
+    dialog.setResultConverter(editor.getController().getResultConverter());
     dialog.showAndWait()
-            .filter(ButtonType.OK::equals)
-            .ifPresent(action -> {
-              MonsterEditController controller = editor.getController();
-              var item = (T) new MonsterDTO(controller.getName().getText(), controller.getDescription().getText());
+            .ifPresent(item -> {
               tableView.getItems().add(item);
+              tableView.getSelectionModel().select(item);
+              tableView.scrollTo(item);
             });
   }
 
@@ -91,7 +95,7 @@ public abstract class MasterViewController<T extends Modifiable> {
 
   public final void initialize() {
     init();
-    tableView.setItems(getItems());
+    tableView.setItems(itemService.getItems());
   }
 
   protected void setViewTitle(String title) {
@@ -137,7 +141,5 @@ public abstract class MasterViewController<T extends Modifiable> {
    * Delegate titles and collumns initialization to subclass.
    */
   protected abstract void init();
-
-  protected abstract ObservableList<T> getItems();
 
 }

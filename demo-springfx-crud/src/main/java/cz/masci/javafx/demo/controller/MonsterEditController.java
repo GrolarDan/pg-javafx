@@ -16,9 +16,16 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.dto.MonsterDTO;
+import cz.masci.javafx.demo.service.EditControllerService;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -32,11 +39,37 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Getter
 @FxmlView("monster-edit.fxml")
-public class MonsterEditController {
-  
+public class MonsterEditController implements EditControllerService<MonsterDTO> {
+
+  @FXML
+  private DialogPane dialog;
+
   @FXML
   private TextField name;
-  
+
   @FXML
   private TextArea description;
+
+  public void initialize() {
+    Button btOk = (Button) dialog.lookupButton(ButtonType.OK);
+    btOk.addEventFilter(ActionEvent.ACTION, event -> {
+      if (!validate()) {
+        event.consume();
+      }
+    });
+  }
+
+  @Override
+  public Callback<ButtonType, MonsterDTO> getResultConverter() {
+    return (buttonType) -> {
+      if (ButtonType.OK.equals(buttonType) && validate()) {
+        return new MonsterDTO(name.getText(), description.getText());
+      }
+      return null;
+    };
+  }
+
+  private boolean validate() {
+    return !name.getText().isBlank();
+  }
 }

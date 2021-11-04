@@ -16,15 +16,13 @@
  */
 package cz.masci.javafx.demo.service;
 
-import cz.masci.javafx.demo.dto.MonsterDTO;
 import javafx.collections.ObservableList;
 
 /**
  *
  * @author Daniel
  */
-public interface MonsterService {
-
-  ObservableList<MonsterDTO> getMonsters();
-  
+public interface ItemService<T> {
+  ObservableList<T> getItems();
+  T addItem(T item);
 }
