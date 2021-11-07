@@ -16,13 +16,15 @@
  */
 package cz.masci.javafx.demo.service;
 
-import javafx.collections.ObservableList;
+import java.util.List;
 
 /**
  *
  * @author Daniel
  */
-public interface ItemService<T> {
-  ObservableList<T> getItems();
-  T addItem(T item);
+public interface CrudService<T extends Modifiable> {
+  List<T> list();
+  T create(T item);
+  T delete(T item);
+  T update(T item);
 }

@@ -16,16 +16,15 @@
  */
 package cz.masci.javafx.demo.controller;
 
-import cz.masci.javafx.demo.dto.MonsterDTO;
 import cz.masci.javafx.demo.service.EditControllerService;
-import cz.masci.javafx.demo.service.ItemService;
 import cz.masci.javafx.demo.service.Modifiable;
 import cz.masci.javafx.demo.service.ModifiableService;
 import cz.masci.javafx.demo.utility.StyleChangingRowFactory;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
@@ -40,6 +39,9 @@ import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
+import cz.masci.javafx.demo.service.CrudService;
+import java.util.List;
+import javafx.collections.FXCollections;
 
 /**
  * This is abstract controller for Master View editor with list of items.
@@ -54,7 +56,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class MasterViewController<T extends Modifiable> {
 
   private final FxWeaver fxWeaver;
-  private final ItemService itemService;
+  private final CrudService<T> itemService;
+  private final String itemKey;
   private final Class<? extends EditControllerService<T>> editControllerClass;
   private ModifiableService modifiableService;
 
@@ -82,10 +85,35 @@ public abstract class MasterViewController<T extends Modifiable> {
     dialog.setResultConverter(editor.getController().getResultConverter());
     dialog.showAndWait()
             .ifPresent(item -> {
+              itemService.create(item);
               tableView.getItems().add(item);
               tableView.getSelectionModel().select(item);
               tableView.scrollTo(item);
             });
+  }
+
+  @FXML
+  public void onSaveAll(ActionEvent event) {
+    Alert alert = new Alert(AlertType.INFORMATION, "Saving all items");
+    alert.showAndWait().ifPresent(button -> {
+      List<T> modifiedList = modifiableService.getAll(itemKey);
+      modifiedList.stream()
+              .forEach(item -> {
+                itemService.update(item);
+                modifiableService.remove(item);
+              });
+    });
+  }
+
+  @FXML
+  public void onDelete(ActionEvent event) {
+    Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure to delete selected item?");
+    alert.showAndWait().ifPresent(button -> {
+      T item = tableView.getSelectionModel().getSelectedItem();
+      tableView.getItems().remove(item);
+      itemService.delete(item);
+      modifiableService.remove(item);
+    });
   }
 
   @Autowired
@@ -95,7 +123,9 @@ public abstract class MasterViewController<T extends Modifiable> {
 
   public final void initialize() {
     init();
-    tableView.setItems(itemService.getItems());
+    var newList = FXCollections.<T>observableArrayList();
+    newList.addAll(itemService.list());
+    tableView.setItems(newList);
   }
 
   protected void setViewTitle(String title) {

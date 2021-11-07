@@ -17,11 +17,11 @@
 package cz.masci.javafx.demo.service.impl;
 
 import cz.masci.javafx.demo.dto.MonsterDTO;
-import cz.masci.javafx.demo.service.ItemService;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import cz.masci.javafx.demo.service.CrudService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,22 +29,48 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class MonsterServiceImpl implements ItemService<MonsterDTO> {
+public class MonsterServiceImpl implements CrudService<MonsterDTO> {
+  
+  private final List<MonsterDTO> monsters;
 
-  @Override
-  public ObservableList<MonsterDTO> getItems() {
-    log.info("Loading Monsters ...");
-    ObservableList<MonsterDTO> monsters = FXCollections.observableArrayList();
+  public MonsterServiceImpl() {
+    monsters = new ArrayList();
     for (int i = 0; i < 100; i++) {
       monsters.add(new MonsterDTO("Monster " + i, String.format("Description %d lorem ipsum", i)));
     }
+  }
+  
+
+  @Override
+  public List<MonsterDTO> list() {
+    log.info("Loading Monsters ...");
 
     return monsters;
   }
 
   @Override
-  public MonsterDTO addItem(MonsterDTO item) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public MonsterDTO create(MonsterDTO item) {
+    log.info("Adding new monster: {}", item);
+    
+    monsters.add(item);
+    
+    return item;
+  }
+
+  @Override
+  public MonsterDTO delete(MonsterDTO item) {
+    log.info("Deleting monster: {}", item);
+    
+    monsters.remove(item);
+    
+    return item;
+  }
+
+  @Override
+  public MonsterDTO update(MonsterDTO item) {
+    log.info("Updating monster: {}", item);
+
+    return item;
   }
 
 }

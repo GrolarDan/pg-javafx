@@ -17,12 +17,12 @@
 package cz.masci.javafx.demo.controller;
 
 import cz.masci.javafx.demo.dto.MonsterDTO;
-import cz.masci.javafx.demo.service.ItemService;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.stereotype.Component;
+import cz.masci.javafx.demo.service.CrudService;
 
 /**
  *
@@ -36,8 +36,8 @@ public class MonsterMasterController extends MasterViewController<MonsterDTO> {
 
   private TableColumn<MonsterDTO, String> description;
 
-  public MonsterMasterController(FxWeaver fxWeaver, ItemService<MonsterDTO> itemService) {
-    super(fxWeaver, itemService, MonsterEditController.class);
+  public MonsterMasterController(FxWeaver fxWeaver, CrudService<MonsterDTO> itemService) {
+    super(fxWeaver, itemService, MonsterDTO.class.getSimpleName(), MonsterEditController.class);
   }
 
   @Override

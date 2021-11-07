@@ -16,6 +16,7 @@
  */
 package cz.masci.javafx.demo.service;
 
+import java.util.List;
 import javafx.collections.ListChangeListener;
 
 /**
@@ -43,5 +44,7 @@ public interface ModifiableService {
   <T extends Modifiable> void removeListener(Class<T> clazz, ListChangeListener<T> changeListener);
 
   <T extends Modifiable> void removeListener(String key, ListChangeListener<T> changeListener);
+  
+  <T extends Modifiable> List<T> getAll(String key);
   
 }

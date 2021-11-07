@@ -3,9 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -25,11 +26,14 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <HBox>
-               <children>
-                  <Button fx:id="newItem" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onNewItem" text="New" />
-               </children>
-            </HBox>
+            <ToolBar>
+              <items>
+                <Button fx:id="newItem" mnemonicParsing="false" onAction="#onNewItem" text="New" />
+                  <Button fx:id="saveAll" mnemonicParsing="false" onAction="#onSaveAll" text="Save All" />
+                  <Separator orientation="VERTICAL" />
+                  <Button fx:id="delete" mnemonicParsing="false" onAction="#onDelete" text="Delete" />
+              </items>
+            </ToolBar>
             <TableView fx:id="tableView" VBox.vgrow="ALWAYS" />
          </children>
          <BorderPane.margin>

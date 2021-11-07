@@ -18,6 +18,8 @@ package cz.masci.javafx.demo.service.impl;
 
 import cz.masci.javafx.demo.service.Modifiable;
 import cz.masci.javafx.demo.service.ModifiableService;
+import java.util.List;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -105,6 +107,13 @@ public class ModifiableServiceImpl implements ModifiableService {
     
     modifiedList.removeListener(changeListener);
     
+  }
+
+  @Override
+  public List<? extends Modifiable> getAll(String key) {
+    var modifiedList = getModifiedList(key);
+    
+    return modifiedList.stream().collect(Collectors.toList());
   }
   
   private <T extends Modifiable> ObservableList<Modifiable> getModifiedList(String key) {
