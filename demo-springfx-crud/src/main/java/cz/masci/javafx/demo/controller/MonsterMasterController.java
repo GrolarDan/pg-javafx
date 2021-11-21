@@ -16,6 +16,7 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.controller.base.MasterViewController;
 import cz.masci.javafx.demo.dto.MonsterDTO;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;

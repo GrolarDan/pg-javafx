@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.masci.javafx.demo.controller;
+package cz.masci.javafx.demo.controller.base;
 
 import cz.masci.javafx.demo.service.EditControllerService;
 import cz.masci.javafx.demo.service.Modifiable;
@@ -25,7 +25,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;

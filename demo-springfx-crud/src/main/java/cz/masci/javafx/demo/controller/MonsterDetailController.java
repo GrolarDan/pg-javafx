@@ -16,13 +16,13 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.control.MonsterDetailControl;
+import cz.masci.javafx.demo.controller.base.DetailViewController;
 import cz.masci.javafx.demo.dto.MonsterDTO;
 import cz.masci.javafx.demo.service.ModifiableService;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
@@ -37,10 +37,7 @@ import org.springframework.stereotype.Component;
 public class MonsterDetailController extends DetailViewController<MonsterDTO> {
 
   @FXML
-  private Label name;
-
-  @FXML
-  private TextArea description;
+  private MonsterDetailControl detail;
 
   public MonsterDetailController(ModifiableService modifiableService) {
     super(MonsterDTO.class.getSimpleName(), modifiableService);
@@ -51,7 +48,7 @@ public class MonsterDetailController extends DetailViewController<MonsterDTO> {
     log.info("Init observable values");
 
     return List.of(
-            description.textProperty()
+            detail.descriptionProperty()
     );
   }
 
@@ -60,11 +57,11 @@ public class MonsterDetailController extends DetailViewController<MonsterDTO> {
     log.info("Filling inputs {}", item);
 
     if (item == null) {
-      name.setText("");
-      description.setText("");
+      detail.setName("");
+      detail.setDescription("");
     } else {
-      name.setText(item.getName());
-      description.setText(item.getDescription());
+      detail.setName(item.getName());
+      detail.setDescription(item.getDescription());
     }
   }
 
@@ -73,7 +70,7 @@ public class MonsterDetailController extends DetailViewController<MonsterDTO> {
     log.info("changes - newValue: {}", newValue);
     log.info("changes - observable: {}", observable);
     
-    if (description.textProperty().equals(observable)) {
+    if (detail.descriptionProperty().equals(observable)) {
       getItem().setDescription(newValue);
     }
   }
