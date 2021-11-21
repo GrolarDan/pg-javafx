@@ -16,31 +16,28 @@
  */
 package cz.masci.javafx.demo.control;
 
-import java.io.IOException;
+import cz.masci.javafx.demo.FxmlRoot;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Daniel
  */
+@Service
+@Scope("prototype")
+@FxmlView("monster-detail-control.fxml")
+@FxmlRoot
 public class MonsterDetailControl extends GridPane {
 
   public MonsterDetailControl() {
     System.out.println("MonsterDetailControl constructor");
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("monster-detail-control.fxml"));
-    fxmlLoader.setRoot(this);
-    fxmlLoader.setController(this);
-
-    try {
-      fxmlLoader.load();
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    }
   }
 
   public void initialize() {

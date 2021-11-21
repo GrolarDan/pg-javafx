@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.util.BuilderFactory;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxControllerAndView;
@@ -46,12 +47,19 @@ import org.springframework.stereotype.Component;
 public class ExternalControllerFxWeaver extends FxWeaver {
 
   private final Callback<Class<?>, Object> beanFactory;
+  private final BuilderFactory builderFactory;
 
   @Autowired
   public ExternalControllerFxWeaver(ConfigurableApplicationContext context) {
     super(context::getBean, context::close);
 
     beanFactory = (requiredType) -> context.getBean(requiredType);
+    builderFactory = (type) -> {
+      if (Optional.ofNullable(type.getAnnotation(FxmlView.class)).isPresent()) {
+        return () -> this.loadController(type);
+      }
+      return null;
+    };
   }
 
   /**
@@ -102,12 +110,16 @@ public class ExternalControllerFxWeaver extends FxWeaver {
     try ( InputStream fxmlStream = url.openStream()) {
       loader.setLocation(url);
       loader.setControllerFactory(beanFactory);
+      loader.setBuilderFactory(builderFactory);
       if (resourceBundle != null) {
         loader.setResources(resourceBundle);
       }
 
       C controller = getBean(controllerClass);
       loader.setController(controller);
+      
+      Optional.ofNullable(controllerClass.getAnnotation(FxmlRoot.class)).ifPresent((unused) -> loader.setRoot(controller));
+      
       V view = loader.load(fxmlStream);
 
       return SimpleFxControllerAndView.of(controller, view);
