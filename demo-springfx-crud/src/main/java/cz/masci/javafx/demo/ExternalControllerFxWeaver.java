@@ -18,6 +18,7 @@ package cz.masci.javafx.demo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -33,6 +34,8 @@ import net.rgielen.fxweaver.core.FxmlView;
 import net.rgielen.fxweaver.core.SimpleFxControllerAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.stereotype.Component;
 
 /**
@@ -115,10 +118,15 @@ public class ExternalControllerFxWeaver extends FxWeaver {
         loader.setResources(resourceBundle);
       }
 
-      C controller = getBean(controllerClass);
-      loader.setController(controller);
+      C controller = null;
+      if (Optional.ofNullable(AnnotationUtils.findAnnotation(controllerClass, FxmlController.class)).isPresent()) {
+        controller = getBean(controllerClass);
+        loader.setController(controller);
+      }
       
-      Optional.ofNullable(controllerClass.getAnnotation(FxmlRoot.class)).ifPresent((unused) -> loader.setRoot(controller));
+      if (Optional.ofNullable(AnnotationUtils.findAnnotation(controllerClass, FxmlRoot.class)).isPresent()) {
+        loader.setRoot(controller);
+      }
       
       V view = loader.load(fxmlStream);
 
@@ -183,4 +191,5 @@ public class ExternalControllerFxWeaver extends FxWeaver {
     return Optional.ofNullable(c.getAnnotation(FxmlView.class))
             .orElseGet(() -> getAnnotation(c.getSuperclass()));
   }
+  
 }

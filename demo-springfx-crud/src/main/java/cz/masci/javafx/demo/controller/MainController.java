@@ -16,6 +16,7 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.FxmlController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @FxmlView("main-scene.fxml")
+@FxmlController
 public class MainController {
 
   private final FxWeaver fxWeaver;

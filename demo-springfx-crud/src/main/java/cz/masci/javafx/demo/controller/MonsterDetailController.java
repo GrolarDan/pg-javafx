@@ -16,6 +16,7 @@
  */
 package cz.masci.javafx.demo.controller;
 
+import cz.masci.javafx.demo.FxmlController;
 import cz.masci.javafx.demo.control.MonsterDetailControl;
 import cz.masci.javafx.demo.controller.base.DetailViewController;
 import cz.masci.javafx.demo.dto.MonsterDTO;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @FxmlView("monster-detail.fxml")
+@FxmlController
 public class MonsterDetailController extends DetailViewController<MonsterDTO> {
 
   @FXML
