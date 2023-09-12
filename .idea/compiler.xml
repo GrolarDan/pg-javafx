@@ -11,6 +11,7 @@
         <module name="demo-slide" />
         <module name="demo-button" />
         <module name="demo-springfx-crud" />
+        <module name="home-sceen" />
       </profile>
     </annotationProcessing>
   </component>

@@ -3,9 +3,12 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/demo-button/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/demo-button/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-home-screen/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-home-screen/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/demo-slide/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/demo-slide/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/demo-springfx-crud/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-springfx-crud/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/demo-table-detail/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/demo-table-detail/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
