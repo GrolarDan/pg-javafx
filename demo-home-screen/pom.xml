@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>home-sceen</artifactId>
+    <artifactId>demo-home-screen</artifactId>
     <name>DEMO: Home Screen</name>
 
     <properties>

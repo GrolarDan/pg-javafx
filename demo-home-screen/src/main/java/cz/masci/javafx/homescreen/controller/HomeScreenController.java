@@ -56,8 +56,10 @@ public class HomeScreenController implements Initializable {
       stage = new Stage();
       stage.setScene(scene);
       stages.put(source.getId(), stage);
+      stage.show();
+    } else {
+      stage.requestFocus();
     }
-    stage.show();
   }
 
   @Override
