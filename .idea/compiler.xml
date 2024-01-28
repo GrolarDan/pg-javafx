@@ -7,11 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="demo-table-detail" />
         <module name="demo-slide" />
         <module name="demo-button" />
         <module name="demo-springfx-crud" />
         <module name="home-sceen" />
+        <module name="demo-bindings" />
+        <module name="demo-table-detail" />
+        <module name="demo-home-screen" />
       </profile>
     </annotationProcessing>
   </component>

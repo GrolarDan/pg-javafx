@@ -16,5 +16,10 @@
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="sonatype-public" />
+      <option name="name" value="Sonatype public repository" />
+      <option name="url" value="https://s01.oss.sonatype.org/content/groups/public" />
+    </remote-repository>
   </component>
 </project>

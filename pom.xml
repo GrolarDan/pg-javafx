@@ -21,14 +21,25 @@
         <javafx.version>17.0.0.1</javafx.version>
         <javafx.plugin.version>0.0.8</javafx.plugin.version>
         <materialfx.version>11.16.1</materialfx.version>
+        <dirtyfx.version>0.1.2</dirtyfx.version>
+        <reactfx.version>2.0-M5</reactfx.version>
+        <commons.springfx.version>0.0.21-SNAPSHOT</commons.springfx.version>
 
         <projectlombok.version>1.18.20</projectlombok.version>
         <slf4j.version>1.7.32</slf4j.version>
+        <junit.version>5.8.1</junit.version>
+        <testfx.version>4.0.17</testfx.version>
+        <maven.surefire.plugin.version>3.2.2</maven.surefire.plugin.version>
     </properties>
 
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>cz.masci.commons</groupId>
+                <artifactId>commons-springfx-mvci</artifactId>
+                <version>${commons.springfx.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
@@ -59,6 +70,36 @@
                 <groupId>io.github.palexdev</groupId>
                 <artifactId>materialfx</artifactId>
                 <version>${materialfx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nield</groupId>
+                <artifactId>dirtyfx</artifactId>
+                <version>${dirtyfx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reactfx</groupId>
+                <artifactId>reactfx</artifactId>
+                <version>${reactfx.version}</version>
+            </dependency>
+
+            <!-- tests -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testfx</groupId>
+                <artifactId>testfx-junit5</artifactId>
+                <version>${testfx.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testfx</groupId>
+                <artifactId>testfx-core</artifactId>
+                <version>${testfx.version}</version>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -133,6 +174,17 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                    <configuration>
+                        <argLine>
+                            --add-exports javafx.graphics/com.sun.javafx.application=testfx.core
+                            --add-opens javafx.graphics/com.sun.javafx.application=testfx.core
+                        </argLine>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -143,6 +195,7 @@
         <module>demo-springfx-crud</module>
         <module>demo-slide</module>
         <module>demo-home-screen</module>
+        <module>demo-bindings</module>
     </modules>
 
 </project>
