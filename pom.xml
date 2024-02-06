@@ -23,7 +23,7 @@
         <materialfx.version>11.16.1</materialfx.version>
         <dirtyfx.version>0.1.2</dirtyfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
-        <commons.springfx.version>0.0.21-SNAPSHOT</commons.springfx.version>
+        <commons.springfx.version>0.0.21</commons.springfx.version>
 
         <projectlombok.version>1.18.20</projectlombok.version>
         <slf4j.version>1.7.32</slf4j.version>

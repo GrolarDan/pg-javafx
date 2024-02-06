@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -355,35 +356,136 @@ public class BindingsTest {
     assertEquals("New Description", description.getText());
 
   }
-  // endregion
 
-  // region model
-  public static class TestModel {
-    private final StringProperty name = new SimpleStringProperty();
-    private final StringProperty description = new SimpleStringProperty();
+  @Test
+  void bind_property_of_property_biDirectional_with_MFXTextField() {
+    // prepare
+    TestModel model = new TestModel();
+    model.setName("Name");
+    model.setDescription("Description");
+    Var<TestModel> src = Var.newSimpleVar(null);
+    Var<String> dstName = src.selectVar(TestModel::nameProperty);
+    Var<String> dstDescription = src.selectVar(TestModel::descriptionProperty);
+    MFXTextField name = new MFXTextField();
+    name.textProperty().bindBidirectional(dstName);
+    MFXTextField description = new MFXTextField();
+    description.textProperty().bindBidirectional(dstDescription);
 
-    public String getName() {
-      return name.get();
-    }
+    // assert
+    assertNull(dstName.getValue());
+    assertNull(dstDescription.getValue());
+    assertNull(name.getText());
+    assertNull(description.getText());
 
-    public StringProperty nameProperty() {
-      return name;
-    }
+    // update model when not bound
+    // act
+    model.setName("Name 2");
+    // assert
+    assertNull(dstName.getValue());
+    assertNull(dstDescription.getValue());
+    assertNull(name.getText());
+    assertNull(description.getText());
 
-    public void setName(String name) {
-      this.name.set(name);
-    }
+    // set model
+    // act
+    src.setValue(model);
+    // assert
+    assertEquals("Name 2", dstName.getValue());
+    assertEquals("Description", dstDescription.getValue());
+    assertEquals("Name 2", name.getText());
+    assertEquals("Description", description.getText());
 
-    public String getDescription() {
-      return description.get();
-    }
+    // update model
+    // act
+    model.setName("New Name");
+    // assert
+    assertEquals("New Name", model.getName());
+    assertEquals("New Name", dstName.getValue());
+    assertEquals("New Name", name.getText());
+    assertEquals("Description", model.getDescription());
+    assertEquals("Description", dstDescription.getValue());
+    assertEquals("Description", description.getText());
 
-    public StringProperty descriptionProperty() {
-      return description;
-    }
+    // update dst
+    // act
+    dstDescription.setValue("New Description");
+    // assert
+    assertEquals("New Name", model.getName());
+    assertEquals("New Name", dstName.getValue());
+    assertEquals("New Name", name.getText());
+    assertEquals("New Description", model.getDescription());
+    assertEquals("New Description", dstDescription.getValue());
+    assertEquals("New Description", description.getText());
 
-    public void setDescription(String description) {
-      this.description.set(description);
-    }
+    // set new src
+    // act
+    TestModel newModel = new TestModel();
+    newModel.setName("New Model Name");
+    newModel.setDescription("New Model Description");
+    src.setValue(newModel);
+    // assert
+    assertEquals("New Name", model.getName());
+    assertEquals("New Model Name", newModel.getName());
+    assertEquals("New Model Name", dstName.getValue());
+    assertEquals("New Model Name", name.getText());
+    assertEquals("New Description", model.getDescription());
+    assertEquals("New Model Description", newModel.getDescription());
+    assertEquals("New Model Description", dstDescription.getValue());
+    assertEquals("New Model Description", description.getText());
+
+    // update dst when connected to new model
+    // act
+    dstName.setValue("New Model New Name");
+    // assert
+    assertEquals("New Name", model.getName());
+    assertEquals("New Model New Name", newModel.getName());
+    assertEquals("New Model New Name", dstName.getValue());
+    assertEquals("New Model New Name", name.getText());
+    assertEquals("New Description", model.getDescription());
+    assertEquals("New Model Description", newModel.getDescription());
+    assertEquals("New Model Description", dstDescription.getValue());
+    assertEquals("New Model Description", description.getText());
+
+    // set back old model
+    // act
+    src.setValue(model);
+    // assert
+    assertEquals("New Name", model.getName());
+    assertEquals("New Model New Name", newModel.getName());
+    assertEquals("New Name", dstName.getValue());
+    assertEquals("New Name", name.getText());
+    assertEquals("New Description", model.getDescription());
+    assertEquals("New Model Description", newModel.getDescription());
+    assertEquals("New Description", dstDescription.getValue());
+    assertEquals("New Description", description.getText());
+
+    // set null src
+    // act
+    src.setValue(null);
+    // assert
+    assertEquals("New Name", model.getName());
+    assertEquals("New Model New Name", newModel.getName());
+    assertNull(dstName.getValue());
+    assertNull(name.getText());
+    assertEquals("New Description", model.getDescription());
+    assertEquals("New Model Description", newModel.getDescription());
+    assertNull(dstDescription.getValue());
+    assertNull(description.getText());
+
+    // set text field value
+    // act
+    src.setValue(model);
+    name.setText("Field Name");
+    // assert
+    assertEquals("Field Name", model.getName());
+    assertEquals("New Model New Name", newModel.getName());
+    assertEquals("Field Name", dstName.getValue());
+    assertEquals("Field Name", name.getText());
+    assertEquals("New Description", model.getDescription());
+    assertEquals("New Model Description", newModel.getDescription());
+    assertEquals("New Description", dstDescription.getValue());
+    assertEquals("New Description", description.getText());
+
   }
+  // endregion
 }
