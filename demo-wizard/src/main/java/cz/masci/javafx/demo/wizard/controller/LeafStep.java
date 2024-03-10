@@ -6,24 +6,28 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.Region;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
 
-@RequiredArgsConstructor
 public class LeafStep implements WizardStep {
-  private boolean active;
-  private final Region view;
+  private boolean active = false;
 
-  @Setter
-  private Consumer<StringProperty> updateTitle;
-  @Setter
-  private Consumer<StringProperty> updateNextText;
-  @Setter
-  private Consumer<StringProperty> updatePrevText;
-  @Setter
-  private Consumer<BooleanProperty> updateNextDisable;
-  @Setter
-  private Consumer<BooleanProperty> updatePrevDisable;
+  private final Region view;
+  private final Consumer<StringProperty> updateTitle;
+  private final Consumer<StringProperty> updateNextText;
+  private final Consumer<StringProperty> updatePrevText;
+  private final Consumer<BooleanProperty> updateNextDisable;
+  private final Consumer<BooleanProperty> updatePrevDisable;
+
+  @Builder
+  public LeafStep(Region view, Consumer<StringProperty> updateTitle, Consumer<StringProperty> updateNextText, Consumer<StringProperty> updatePrevText,
+                  Consumer<BooleanProperty> updateNextDisable, Consumer<BooleanProperty> updatePrevDisable) {
+    this.view = view;
+    this.updateTitle = updateTitle;
+    this.updateNextText = updateNextText;
+    this.updatePrevText = updatePrevText;
+    this.updateNextDisable = updateNextDisable;
+    this.updatePrevDisable = updatePrevDisable;
+  }
 
   @Override
   public void next(WizardViewModel wizardViewModel) {
@@ -46,13 +50,13 @@ public class LeafStep implements WizardStep {
   }
 
   @Override
-  public boolean hasNext() {
-    return false;
+  public boolean hasNoNext() {
+    return true;
   }
 
   @Override
-  public boolean hasPrevious() {
-    return false;
+  public boolean hasNoPrevious() {
+    return true;
   }
 
   private void doStep(WizardViewModel wizardViewModel) {

@@ -19,10 +19,11 @@
 
 package cz.masci.javafx.demo.wizard.controller.test;
 
-import cz.masci.javafx.demo.wizard.controller.RootCompositeStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepBuilder;
+import cz.masci.javafx.demo.wizard.controller.CompositeStep;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
 import java.util.Arrays;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,15 +31,49 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class BattleWizardController implements WizardStepProvider {
 
-  private final RootCompositeStep wizardStep;
+  private final CompositeStep wizardStep;
 
   public BattleWizardController() {
-    wizardStep = WizardStepBuilder.builder()
-                                  .children(Arrays.asList(
-                                      new BattlePreparationController().getWizardStep(),
-                                      new BattleDuellistSummaryController().getWizardStep(),
-                                      new BattleController().getWizardStep(),
-                                      new BattleSummaryController().getWizardStep()))
-                                  .buildRootCompositeStep();
+    wizardStep = CompositeStep.builder()
+                              .children(Arrays.asList(new BattlePreparationController().getWizardStep(),
+                                  new BattleDuellistSummaryController().getWizardStep(), new BattleController().getWizardStep(),
+                                  new BattleSummaryController().getWizardStep()))
+                              .updateNextDisable(this::updateNextDisable)
+                              .updatePrevDisable(this::updatePrevDisable)
+                              .build();
+  }
+
+  private void updateNextDisable(BooleanProperty disable) {
+    if (wizardStep.current() != null) {
+      var step = wizardStep.current();
+      var noNextStep = wizardStep.hasNoNext() && step.hasNoNext();
+      if (disable.isBound()) {
+        disable.or(new SimpleBooleanProperty(noNextStep));
+      } else {
+        disable.set(noNextStep);
+      }
+    } else {
+      if (disable.isBound()) {
+        disable.unbind();
+      }
+      disable.set(wizardStep.hasNoNext());
+    }
+  }
+
+  private void updatePrevDisable(BooleanProperty disable) {
+    if (wizardStep.current() != null) {
+      var step = wizardStep.current();
+      var noPrevStep = wizardStep.hasNoPrevious() && step.hasNoPrevious();
+      if (disable.isBound()) {
+        disable.or(new SimpleBooleanProperty(noPrevStep));
+      } else {
+        disable.set(noPrevStep);
+      }
+    } else {
+      if (disable.isBound()) {
+        disable.unbind();
+      }
+      disable.set(wizardStep.hasNoPrevious());
+    }
   }
 }

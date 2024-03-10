@@ -8,9 +8,9 @@ import javafx.beans.property.StringProperty;
 public class WizardViewModel {
   private final BooleanProperty prevDisable = new SimpleBooleanProperty(false);
   private final BooleanProperty nextDisable = new SimpleBooleanProperty(false);
-  private final StringProperty prevText = new SimpleStringProperty("");
-  private final StringProperty nextText = new SimpleStringProperty("");
-  private final StringProperty title = new SimpleStringProperty("");
+  private final StringProperty prevText = new SimpleStringProperty("PREVIOUS");
+  private final StringProperty nextText = new SimpleStringProperty("NEXT");
+  private final StringProperty title = new SimpleStringProperty("TITLE");
 
   // region properties
   public BooleanProperty prevDisableProperty() {

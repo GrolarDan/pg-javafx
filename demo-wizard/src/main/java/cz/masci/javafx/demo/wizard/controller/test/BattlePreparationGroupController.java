@@ -20,7 +20,6 @@
 package cz.masci.javafx.demo.wizard.controller.test;
 
 import cz.masci.javafx.demo.wizard.controller.LeafStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepBuilder;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
 import cz.masci.javafx.demo.wizard.view.BattlePreparationGroupStepViewBuilder;
 import java.util.function.Consumer;
@@ -35,10 +34,11 @@ public class BattlePreparationGroupController implements WizardStepProvider {
   private final LeafStep wizardStep;
 
   public BattlePreparationGroupController(IntegerProperty groupCount) {
-    wizardStep = WizardStepBuilder.builder()
-                                  .updateTitle(this::updateTitle)
-                                  .updateNextDisable(updateNextDisable(groupCount))
-                                  .buildLeafStep(new BattlePreparationGroupStepViewBuilder(groupCount));
+    wizardStep = LeafStep.builder()
+                         .view(new BattlePreparationGroupStepViewBuilder(groupCount).build())
+                         .updateTitle(this::updateTitle)
+                         .updateNextDisable(updateNextDisable(groupCount))
+                         .build();
   }
 
   private void updateTitle(StringProperty title) {

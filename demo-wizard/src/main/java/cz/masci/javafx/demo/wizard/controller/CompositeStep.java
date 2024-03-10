@@ -2,17 +2,21 @@ package cz.masci.javafx.demo.wizard.controller;
 
 import cz.masci.javafx.demo.wizard.model.WizardViewModel;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.Region;
+import lombok.Builder;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CompositeStep implements WizardStep {
+  // TODO Enable go to specific step position
+  // TODO Change next/prevText based on step
   private final static int BEFORE_INTERVAL = -1;
   protected WizardStep currentStep;
   private int currentPosition = BEFORE_INTERVAL;
@@ -20,24 +24,32 @@ public class CompositeStep implements WizardStep {
   @Setter
   private List<? extends WizardStep> children;
 
-  @Setter
-  private Consumer<WizardViewModel> beforeFirstNext; // on move from -1 to 0
-  @Setter
-  private Consumer<WizardViewModel> beforeFirstPrevious; // on move from size to size - 1
-  @Setter
-  private Consumer<WizardViewModel> afterLastNext; // on move from size-1 to size
-  @Setter
-  private Consumer<WizardViewModel> afterLastPrevious; // on move from 0 to -1
-  @Setter
-  private Consumer<StringProperty> updateTitle;
-  @Setter
-  private Consumer<StringProperty> updateNextText;
-  @Setter
-  private Consumer<StringProperty> updatePrevText;
-  @Setter
-  private Consumer<BooleanProperty> updateNextDisable;
-  @Setter
-  private Consumer<BooleanProperty> updatePrevDisable;
+  private final Consumer<WizardViewModel> beforeFirstNext; // on move from -1 to 0
+  private final Consumer<WizardViewModel> beforeFirstPrevious; // on move from size to size - 1
+  private final Consumer<WizardViewModel> afterLastNext; // on move from size-1 to size
+  private final Consumer<WizardViewModel> afterLastPrevious; // on move from 0 to -1
+  private final Consumer<StringProperty> updateTitle;
+  private final Consumer<StringProperty> updateNextText;
+  private final Consumer<StringProperty> updatePrevText;
+  private final Consumer<BooleanProperty> updateNextDisable;
+  private final Consumer<BooleanProperty> updatePrevDisable;
+
+  @Builder
+  public CompositeStep(List<? extends WizardStep> children, Consumer<WizardViewModel> beforeFirstNext, Consumer<WizardViewModel> beforeFirstPrevious,
+                       Consumer<WizardViewModel> afterLastNext, Consumer<WizardViewModel> afterLastPrevious, Consumer<StringProperty> updateTitle,
+                       Consumer<StringProperty> updateNextText, Consumer<StringProperty> updatePrevText, Consumer<BooleanProperty> updateNextDisable,
+                       Consumer<BooleanProperty> updatePrevDisable) {
+    this.children = children;
+    this.beforeFirstNext = beforeFirstNext;
+    this.beforeFirstPrevious = beforeFirstPrevious;
+    this.afterLastNext = afterLastNext;
+    this.afterLastPrevious = afterLastPrevious;
+    this.updateTitle = updateTitle;
+    this.updateNextText = Objects.requireNonNullElse(updateNextText, this::defaultNextText);
+    this.updatePrevText = Objects.requireNonNullElse(updatePrevText, this::defaultPrevText);
+    this.updateNextDisable = Objects.requireNonNullElse(updateNextDisable, this::defaultNextDisable);
+    this.updatePrevDisable = Objects.requireNonNullElse(updatePrevDisable, this::defaultPrevDisable);
+  }
 
   @Override
   public void next(WizardViewModel wizardViewModel) {
@@ -92,13 +104,13 @@ public class CompositeStep implements WizardStep {
   }
 
   @Override
-  public boolean hasNext() {
-    return currentPosition < children.size() - 1;
+  public boolean hasNoNext() {
+    return currentPosition >= children.size() - 1;
   }
 
   @Override
-  public boolean hasPrevious() {
-    return currentPosition > 0;
+  public boolean hasNoPrevious() {
+    return currentPosition <= 0;
   }
 
   private void doStep(int newPosition, WizardViewModel wizardViewModel) {
@@ -110,7 +122,9 @@ public class CompositeStep implements WizardStep {
         currentStep.previous(wizardViewModel);
       }
     }
-    if (Optional.ofNullable(currentStep).map(WizardStep::current).isEmpty()) {  // current step is empty/null
+    if (Optional.ofNullable(currentStep)
+                .map(WizardStep::current)
+                .isEmpty()) {  // current step is empty/null
       currentStep = -1 < newPosition && newPosition < children.size() ? children.get(newPosition) : null;
       if (currentStep != null) { // if there is still some step in this composite do the prev/next on the child
         if (newPosition > currentPosition) {
@@ -127,10 +141,14 @@ public class CompositeStep implements WizardStep {
 
   private void updateWizardViewModel(WizardViewModel wizardViewModel) {
     consumeIfNotNull(updateTitle, wizardViewModel.titleProperty());
-    consumeIfNotNullOrElseConsume(updateNextText, this::defaultNextText, wizardViewModel.nextTextProperty());
-    consumeIfNotNullOrElseConsume(updatePrevText, this::defaultPrevText, wizardViewModel.prevTextProperty());
-    consumeIfNotNullOrElseConsume(updateNextDisable, this::defaultNextDisable, wizardViewModel.nextDisableProperty());
-    consumeIfNotNullOrElseConsume(updatePrevDisable, this::defaultPrevDisable, wizardViewModel.prevDisableProperty());
+    consumeIfNotNull(updateNextText, wizardViewModel.nextTextProperty());
+    consumeIfNotNull(updatePrevText, wizardViewModel.prevTextProperty());
+    consumeIfNotNull(updateNextDisable, wizardViewModel.nextDisableProperty());
+    consumeIfNotNull(updatePrevDisable, wizardViewModel.prevDisableProperty());
+    //    consumeIfNotNullOrElseConsume(updateNextText, this::defaultNextText, wizardViewModel.nextTextProperty());
+    //    consumeIfNotNullOrElseConsume(updatePrevText, this::defaultPrevText, wizardViewModel.prevTextProperty());
+    //    consumeIfNotNullOrElseConsume(updateNextDisable, this::defaultNextDisable, wizardViewModel.nextDisableProperty());
+    //    consumeIfNotNullOrElseConsume(updatePrevDisable, this::defaultPrevDisable, wizardViewModel.prevDisableProperty());
   }
 
   private void unbindWizardViewModel(WizardViewModel wizardViewModel) {
@@ -164,14 +182,6 @@ public class CompositeStep implements WizardStep {
   private <T> void consumeIfNotNull(Consumer<T> consumer, T value) {
     if (consumer != null) {
       consumer.accept(value);
-    }
-  }
-
-  private <T> void consumeIfNotNullOrElseConsume(Consumer<T> consumer, Consumer<T> elseConsumer, T value) {
-    if (consumer != null) {
-      consumer.accept(value);
-    } else {
-      elseConsumer.accept(value);
     }
   }
 

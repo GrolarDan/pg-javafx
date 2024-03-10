@@ -9,6 +9,6 @@ public interface WizardStep {
   void previous(WizardViewModel wizardViewModel);
   WizardStep current();
   Region getView();
-  boolean hasNext();
-  boolean hasPrevious();
+  boolean hasNoNext();
+  boolean hasNoPrevious();
 }

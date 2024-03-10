@@ -20,7 +20,6 @@
 package cz.masci.javafx.demo.wizard.controller.test;
 
 import cz.masci.javafx.demo.wizard.controller.LeafStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepBuilder;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
 import cz.masci.javafx.demo.wizard.view.BattleStepViewBuilder;
 import java.util.function.Consumer;
@@ -33,9 +32,10 @@ public class BattlePreparationDuellistChildController implements WizardStepProvi
   private final LeafStep wizardStep;
 
   public BattlePreparationDuellistChildController(String groupName) {
-    wizardStep = WizardStepBuilder.builder()
-                                  .updateTitle(updateTitle(groupName))
-                                  .buildLeafStep(new BattleStepViewBuilder(groupName));
+    wizardStep = LeafStep.builder()
+                         .view(new BattleStepViewBuilder(groupName).build())
+                         .updateTitle(updateTitle(groupName))
+                         .build();
   }
 
   private Consumer<StringProperty> updateTitle(String groupName) {

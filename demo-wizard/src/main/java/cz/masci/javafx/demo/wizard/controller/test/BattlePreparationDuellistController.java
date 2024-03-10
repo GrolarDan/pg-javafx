@@ -20,7 +20,6 @@
 package cz.masci.javafx.demo.wizard.controller.test;
 
 import cz.masci.javafx.demo.wizard.controller.CompositeStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepBuilder;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
 import cz.masci.javafx.demo.wizard.model.WizardViewModel;
 import java.util.function.Consumer;
@@ -35,9 +34,9 @@ public class BattlePreparationDuellistController implements WizardStepProvider {
   private final CompositeStep wizardStep;
 
   public BattlePreparationDuellistController(IntegerProperty groupCount) {
-    wizardStep = WizardStepBuilder.builder()
-                                  .onBeforeFirstNext(initChildren(groupCount))
-                                  .buildCompositeStep();
+    wizardStep = CompositeStep.builder()
+                              .beforeFirstNext(initChildren(groupCount))
+                              .build();
   }
 
   private Consumer<WizardViewModel> initChildren(IntegerProperty groupCount) {

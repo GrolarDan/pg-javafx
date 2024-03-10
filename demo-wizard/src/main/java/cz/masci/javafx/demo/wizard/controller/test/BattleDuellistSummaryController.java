@@ -20,7 +20,6 @@
 package cz.masci.javafx.demo.wizard.controller.test;
 
 import cz.masci.javafx.demo.wizard.controller.LeafStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepBuilder;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
 import cz.masci.javafx.demo.wizard.view.BattleStepViewBuilder;
 import javafx.beans.property.StringProperty;
@@ -32,9 +31,10 @@ public class BattleDuellistSummaryController implements WizardStepProvider {
   private final LeafStep wizardStep;
 
   public BattleDuellistSummaryController() {
-    wizardStep = WizardStepBuilder.builder()
-                                  .updateTitle(this::updateTitle)
-                                  .buildLeafStep(new BattleStepViewBuilder("Duellist Summary"));
+    wizardStep = LeafStep.builder()
+                         .view(new BattleStepViewBuilder("Duellist Summary").build())
+                         .updateTitle(this::updateTitle)
+                         .build();
   }
 
   private void updateTitle(StringProperty title) {

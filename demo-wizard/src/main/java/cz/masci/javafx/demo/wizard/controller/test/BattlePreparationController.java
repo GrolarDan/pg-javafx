@@ -20,7 +20,6 @@
 package cz.masci.javafx.demo.wizard.controller.test;
 
 import cz.masci.javafx.demo.wizard.controller.CompositeStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepBuilder;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
 import java.util.Arrays;
 import javafx.beans.property.IntegerProperty;
@@ -35,13 +34,12 @@ public class BattlePreparationController implements WizardStepProvider {
 
   public BattlePreparationController() {
     IntegerProperty groupCount = new SimpleIntegerProperty(0);
-    wizardStep = WizardStepBuilder.builder()
-                                  .children(Arrays.asList(
-                                      new BattlePreparationGroupController(groupCount).getWizardStep(),
-                                      new BattlePreparationDuellistController(groupCount).getWizardStep())
-                                  )
-                                  .updateTitle(this::updateTitle)
-                                  .buildCompositeStep();
+    wizardStep = CompositeStep.builder()
+                              .children(Arrays.asList(
+                                  new BattlePreparationGroupController(groupCount).getWizardStep(),
+                                  new BattlePreparationDuellistController(groupCount).getWizardStep()))
+                              .updateTitle(this::updateTitle)
+                              .build();
   }
 
   public void updateTitle(StringProperty title) {

@@ -1,6 +1,7 @@
 package cz.masci.javafx.demo.wizard;
 
 import cz.masci.javafx.demo.wizard.controller.WizardController;
+import cz.masci.javafx.demo.wizard.controller.test.BattleWizardController;
 import io.github.palexdev.materialfx.theming.JavaFXThemes;
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
@@ -28,7 +29,7 @@ public class WizardDemoApp extends Application {
 
   @Override
   public void start(Stage primaryStage) {
-    var wizardController = new WizardController();
+    var wizardController = new WizardController(new BattleWizardController());
     primaryStage.setScene(new Scene(wizardController.getView(), 600, 400));
     primaryStage.show();
   }

@@ -7,13 +7,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="demo-slide" />
-        <module name="demo-button" />
         <module name="demo-springfx-crud" />
         <module name="home-sceen" />
-        <module name="demo-bindings" />
+      </profile>
+      <profile name="Annotation profile for * Playground - JavaFX *" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar" />
+        </processorPath>
         <module name="demo-table-detail" />
+        <module name="demo-slide" />
+        <module name="demo-button" />
         <module name="demo-wizard" />
+        <module name="demo-bindings" />
         <module name="demo-home-screen" />
       </profile>
     </annotationProcessing>

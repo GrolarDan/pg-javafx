@@ -1,7 +1,7 @@
 package cz.masci.javafx.homescreen;
 
-import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-import io.github.palexdev.materialfx.css.themes.Themes;
+//import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
+//import io.github.palexdev.materialfx.css.themes.Themes;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,7 +17,7 @@ public class HelloApplication extends Application {
   public void start(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(FXResourcesLoader.loadURL("fxml/home-screen.fxml"));
     Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-    MFXThemeManager.addOn(scene, Themes.DEFAULT);
+//    MFXThemeManager.addOn(scene, Themes.DEFAULT);
     stage.setTitle("Hello!");
     stage.setScene(scene);
     stage.show();

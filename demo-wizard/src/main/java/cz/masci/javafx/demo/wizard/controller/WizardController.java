@@ -1,6 +1,5 @@
 package cz.masci.javafx.demo.wizard.controller;
 
-import cz.masci.javafx.demo.wizard.controller.test.BattleWizardController;
 import cz.masci.javafx.demo.wizard.model.WizardViewModel;
 import cz.masci.javafx.demo.wizard.view.WizardViewBuilder;
 import java.util.Optional;
@@ -12,15 +11,10 @@ public class WizardController {
   private final WizardStepProvider stepProvider;
   private final WizardViewModel wizardViewModel;
 
-  public WizardController() {
+  public WizardController(WizardStepProvider stepProvider) {
     wizardViewModel = new WizardViewModel();
     builder = new WizardViewBuilder(this::getPrevView, this::getNextView, wizardViewModel);
-    stepProvider = new BattleWizardController();
-
-    wizardViewModel.nextTextProperty()
-                   .set("NEXT");
-    wizardViewModel.prevTextProperty()
-                   .set("PREVIOUS");
+    this.stepProvider = stepProvider;
   }
 
   public Region getView() {
