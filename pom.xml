@@ -20,10 +20,10 @@
 
         <javafx.version>17.0.0.1</javafx.version>
         <javafx.plugin.version>0.0.8</javafx.plugin.version>
-        <materialfx.version>11.16.1</materialfx.version>
+        <materialfx.version>11.17.0</materialfx.version>
         <dirtyfx.version>0.1.2</dirtyfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
-        <commons.springfx.version>0.0.21</commons.springfx.version>
+        <commons.springfx.version>0.0.22</commons.springfx.version>
 
         <projectlombok.version>1.18.20</projectlombok.version>
         <slf4j.version>1.7.32</slf4j.version>
@@ -37,8 +37,10 @@
         <dependencies>
             <dependency>
                 <groupId>cz.masci.commons</groupId>
-                <artifactId>commons-springfx-mvci</artifactId>
+                <artifactId>commons-springfx-bom</artifactId>
                 <version>${commons.springfx.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
@@ -196,6 +198,7 @@
         <module>demo-slide</module>
         <module>demo-home-screen</module>
         <module>demo-bindings</module>
+        <module>demo-wizard</module>
     </modules>
 
 </project>

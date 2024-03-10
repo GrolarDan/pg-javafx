@@ -13,6 +13,7 @@
         <module name="home-sceen" />
         <module name="demo-bindings" />
         <module name="demo-table-detail" />
+        <module name="demo-wizard" />
         <module name="demo-home-screen" />
       </profile>
     </annotationProcessing>
