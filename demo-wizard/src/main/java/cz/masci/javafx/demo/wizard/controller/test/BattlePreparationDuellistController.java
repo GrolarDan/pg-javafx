@@ -35,6 +35,7 @@ public class BattlePreparationDuellistController implements WizardStepProvider {
 
   public BattlePreparationDuellistController(IntegerProperty groupCount) {
     wizardStep = CompositeStep.builder()
+                              .name("Battle Preparation Duellist")
                               .beforeFirstNext(initChildren(groupCount))
                               .build();
   }

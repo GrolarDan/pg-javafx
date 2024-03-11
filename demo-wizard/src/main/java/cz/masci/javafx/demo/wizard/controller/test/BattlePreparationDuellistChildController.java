@@ -33,6 +33,7 @@ public class BattlePreparationDuellistChildController implements WizardStepProvi
 
   public BattlePreparationDuellistChildController(String groupName) {
     wizardStep = LeafStep.builder()
+                         .name("Battle Preparation Duellist Child : " + groupName)
                          .view(new BattleStepViewBuilder(groupName).build())
                          .updateTitle(updateTitle(groupName))
                          .build();

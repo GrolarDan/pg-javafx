@@ -32,6 +32,7 @@ public class BattleDuellistSummaryController implements WizardStepProvider {
 
   public BattleDuellistSummaryController() {
     wizardStep = LeafStep.builder()
+                         .name("Battle Duellist Summary")
                          .view(new BattleStepViewBuilder("Duellist Summary").build())
                          .updateTitle(this::updateTitle)
                          .build();

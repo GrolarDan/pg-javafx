@@ -32,6 +32,7 @@ public class BattleController implements WizardStepProvider {
 
   public BattleController() {
     wizardStep = LeafStep.builder()
+                         .name("Battle")
                          .view(new BattleStepViewBuilder("Battle").build())
                          .updateTitle(this::updateTitle)
                          .build();

@@ -35,6 +35,7 @@ public class BattlePreparationGroupController implements WizardStepProvider {
 
   public BattlePreparationGroupController(IntegerProperty groupCount) {
     wizardStep = LeafStep.builder()
+                         .name("Battle Preparation Group")
                          .view(new BattlePreparationGroupStepViewBuilder(groupCount).build())
                          .updateTitle(this::updateTitle)
                          .updateNextDisable(updateNextDisable(groupCount))

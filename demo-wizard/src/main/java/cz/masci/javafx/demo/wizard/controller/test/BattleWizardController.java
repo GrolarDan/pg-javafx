@@ -21,6 +21,7 @@ package cz.masci.javafx.demo.wizard.controller.test;
 
 import cz.masci.javafx.demo.wizard.controller.CompositeStep;
 import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
+import cz.masci.javafx.demo.wizard.model.WizardViewModel;
 import java.util.Arrays;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -35,35 +36,20 @@ public class BattleWizardController implements WizardStepProvider {
 
   public BattleWizardController() {
     wizardStep = CompositeStep.builder()
-                              .children(Arrays.asList(new BattlePreparationController().getWizardStep(),
-                                  new BattleDuellistSummaryController().getWizardStep(), new BattleController().getWizardStep(),
+                              .name("Battle Wizard")
+                              .children(Arrays.asList(
+                                  new BattlePreparationController().getWizardStep(),
+                                  new BattleDuellistSummaryController().getWizardStep(),
+                                  new BattleController().getWizardStep(),
                                   new BattleSummaryController().getWizardStep()))
-                              .updateNextDisable(this::updateNextDisable)
                               .updatePrevDisable(this::updatePrevDisable)
+                              .afterLastNext(this::goBackToBattle)
                               .build();
-  }
-
-  private void updateNextDisable(BooleanProperty disable) {
-    if (wizardStep.current() != null) {
-      var step = wizardStep.current();
-      var noNextStep = wizardStep.hasNoNext() && step.hasNoNext();
-      if (disable.isBound()) {
-        disable.or(new SimpleBooleanProperty(noNextStep));
-      } else {
-        disable.set(noNextStep);
-      }
-    } else {
-      if (disable.isBound()) {
-        disable.unbind();
-      }
-      disable.set(wizardStep.hasNoNext());
-    }
   }
 
   private void updatePrevDisable(BooleanProperty disable) {
     if (wizardStep.current() != null) {
-      var step = wizardStep.current();
-      var noPrevStep = wizardStep.hasNoPrevious() && step.hasNoPrevious();
+      var noPrevStep = wizardStep.hasNoPrevious();
       if (disable.isBound()) {
         disable.or(new SimpleBooleanProperty(noPrevStep));
       } else {
@@ -75,5 +61,9 @@ public class BattleWizardController implements WizardStepProvider {
       }
       disable.set(wizardStep.hasNoPrevious());
     }
+  }
+
+  private void goBackToBattle(WizardViewModel wizardViewModel) {
+    wizardStep.goToPosition(2, wizardViewModel);
   }
 }

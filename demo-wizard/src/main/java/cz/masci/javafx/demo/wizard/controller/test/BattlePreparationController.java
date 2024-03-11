@@ -35,6 +35,7 @@ public class BattlePreparationController implements WizardStepProvider {
   public BattlePreparationController() {
     IntegerProperty groupCount = new SimpleIntegerProperty(0);
     wizardStep = CompositeStep.builder()
+                              .name("Battle Preparation")
                               .children(Arrays.asList(
                                   new BattlePreparationGroupController(groupCount).getWizardStep(),
                                   new BattlePreparationDuellistController(groupCount).getWizardStep()))

@@ -10,6 +10,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.Region;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +25,8 @@ public class CompositeStep implements WizardStep {
   @Setter
   private List<? extends WizardStep> children;
 
+  @Getter
+  private final String name;
   private final Consumer<WizardViewModel> beforeFirstNext; // on move from -1 to 0
   private final Consumer<WizardViewModel> beforeFirstPrevious; // on move from size to size - 1
   private final Consumer<WizardViewModel> afterLastNext; // on move from size-1 to size
@@ -35,10 +38,11 @@ public class CompositeStep implements WizardStep {
   private final Consumer<BooleanProperty> updatePrevDisable;
 
   @Builder
-  public CompositeStep(List<? extends WizardStep> children, Consumer<WizardViewModel> beforeFirstNext, Consumer<WizardViewModel> beforeFirstPrevious,
+  public CompositeStep(String name, List<? extends WizardStep> children, Consumer<WizardViewModel> beforeFirstNext, Consumer<WizardViewModel> beforeFirstPrevious,
                        Consumer<WizardViewModel> afterLastNext, Consumer<WizardViewModel> afterLastPrevious, Consumer<StringProperty> updateTitle,
                        Consumer<StringProperty> updateNextText, Consumer<StringProperty> updatePrevText, Consumer<BooleanProperty> updateNextDisable,
                        Consumer<BooleanProperty> updatePrevDisable) {
+    this.name = name;
     this.children = children;
     this.beforeFirstNext = beforeFirstNext;
     this.beforeFirstPrevious = beforeFirstPrevious;
@@ -63,7 +67,8 @@ public class CompositeStep implements WizardStep {
 
     doStep(currentPosition + 1, wizardViewModel);
 
-    if (currentPosition > children.size() && afterLastNext != null) {
+    if (currentPosition == children.size() && afterLastNext != null) {
+      // the position could be changed
       afterLastNext.accept(wizardViewModel);
     }
 
@@ -78,13 +83,14 @@ public class CompositeStep implements WizardStep {
       throw new ArrayStoreException("Children has to be initialized");
     }
 
-    if (currentPosition > children.size() && beforeFirstPrevious != null) {
+    if (currentPosition == children.size() && beforeFirstPrevious != null) {
       beforeFirstPrevious.accept(wizardViewModel);
     }
 
     doStep(currentPosition - 1, wizardViewModel);
 
-    if (currentPosition > children.size() && afterLastPrevious != null) {
+    if (currentPosition == BEFORE_INTERVAL && afterLastPrevious != null) {
+      // the position could be changed
       afterLastPrevious.accept(wizardViewModel);
     }
 
@@ -105,12 +111,39 @@ public class CompositeStep implements WizardStep {
 
   @Override
   public boolean hasNoNext() {
-    return currentPosition >= children.size() - 1;
+    return currentPosition >= children.size() - 1 && (currentStep == null || currentStep.hasNoNext());
   }
 
   @Override
   public boolean hasNoPrevious() {
-    return currentPosition <= 0;
+    return currentPosition <= 0 && (currentStep == null || current().hasNoPrevious());
+  }
+
+  @Override
+  public void reset() {
+    currentPosition = BEFORE_INTERVAL;
+    currentStep = null;
+  }
+
+  public void goToPosition(int newPosition, WizardViewModel wizardViewModel) {
+    if (newPosition == 0 && beforeFirstNext != null) {
+      beforeFirstNext.accept(wizardViewModel);
+    }
+
+    if (newPosition == children.size() -1 && beforeFirstPrevious != null) {
+      beforeFirstPrevious.accept(wizardViewModel);
+    }
+
+    currentStep = newPosition > -1 && newPosition < children.size() ? children.get(newPosition) : null;
+
+    if (currentStep != null) {
+      currentStep.reset();
+      currentStep.next(wizardViewModel);
+    }
+
+    currentPosition = newPosition;
+
+    updateWizardViewModel(wizardViewModel);
   }
 
   private void doStep(int newPosition, WizardViewModel wizardViewModel) {
@@ -125,7 +158,7 @@ public class CompositeStep implements WizardStep {
     if (Optional.ofNullable(currentStep)
                 .map(WizardStep::current)
                 .isEmpty()) {  // current step is empty/null
-      currentStep = -1 < newPosition && newPosition < children.size() ? children.get(newPosition) : null;
+      currentStep = newPosition > -1 && newPosition < children.size() ? children.get(newPosition) : null;
       if (currentStep != null) { // if there is still some step in this composite do the prev/next on the child
         if (newPosition > currentPosition) {
           currentStep.next(wizardViewModel);
@@ -145,10 +178,6 @@ public class CompositeStep implements WizardStep {
     consumeIfNotNull(updatePrevText, wizardViewModel.prevTextProperty());
     consumeIfNotNull(updateNextDisable, wizardViewModel.nextDisableProperty());
     consumeIfNotNull(updatePrevDisable, wizardViewModel.prevDisableProperty());
-    //    consumeIfNotNullOrElseConsume(updateNextText, this::defaultNextText, wizardViewModel.nextTextProperty());
-    //    consumeIfNotNullOrElseConsume(updatePrevText, this::defaultPrevText, wizardViewModel.prevTextProperty());
-    //    consumeIfNotNullOrElseConsume(updateNextDisable, this::defaultNextDisable, wizardViewModel.nextDisableProperty());
-    //    consumeIfNotNullOrElseConsume(updatePrevDisable, this::defaultPrevDisable, wizardViewModel.prevDisableProperty());
   }
 
   private void unbindWizardViewModel(WizardViewModel wizardViewModel) {

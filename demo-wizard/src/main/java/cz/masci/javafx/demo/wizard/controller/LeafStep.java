@@ -7,10 +7,13 @@ import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.Region;
 import lombok.Builder;
+import lombok.Getter;
 
 public class LeafStep implements WizardStep {
   private boolean active = false;
 
+  @Getter
+  private final String name;
   private final Region view;
   private final Consumer<StringProperty> updateTitle;
   private final Consumer<StringProperty> updateNextText;
@@ -19,8 +22,9 @@ public class LeafStep implements WizardStep {
   private final Consumer<BooleanProperty> updatePrevDisable;
 
   @Builder
-  public LeafStep(Region view, Consumer<StringProperty> updateTitle, Consumer<StringProperty> updateNextText, Consumer<StringProperty> updatePrevText,
+  public LeafStep(String name, Region view, Consumer<StringProperty> updateTitle, Consumer<StringProperty> updateNextText, Consumer<StringProperty> updatePrevText,
                   Consumer<BooleanProperty> updateNextDisable, Consumer<BooleanProperty> updatePrevDisable) {
+    this.name = name;
     this.view = view;
     this.updateTitle = updateTitle;
     this.updateNextText = updateNextText;
@@ -57,6 +61,11 @@ public class LeafStep implements WizardStep {
   @Override
   public boolean hasNoPrevious() {
     return true;
+  }
+
+  @Override
+  public void reset() {
+    active = false;
   }
 
   private void doStep(WizardViewModel wizardViewModel) {
