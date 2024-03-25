@@ -39,16 +39,21 @@ public class BattlePreparationGroupController implements WizardStepProvider {
                          .view(new BattlePreparationGroupStepViewBuilder(groupCount).build())
                          .updateTitle(this::updateTitle)
                          .updateNextDisable(updateNextDisable(groupCount))
+                         .updateNextText(this::updateNextText)
                          .build();
   }
 
   private void updateTitle(StringProperty title) {
-    title.set("Groups");
+    title.set("Skupiny");
   }
 
   private Consumer<BooleanProperty> updateNextDisable(IntegerProperty groupCount) {
     return disable -> disable.bind(groupCount.asObject()
                                              .isNull()
                                              .or(groupCount.lessThan(2)));
+  }
+
+  private void updateNextText(StringProperty text) {
+    text.set("Bojovníci");
   }
 }

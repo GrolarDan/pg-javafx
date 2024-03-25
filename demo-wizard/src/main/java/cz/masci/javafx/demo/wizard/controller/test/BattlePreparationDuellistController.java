@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 import lombok.Getter;
 
 @Getter
@@ -37,6 +38,7 @@ public class BattlePreparationDuellistController implements WizardStepProvider {
     wizardStep = CompositeStep.builder()
                               .name("Battle Preparation Duellist")
                               .beforeFirstNext(initChildren(groupCount))
+                              .updateNextText(this::updateNextText)
                               .build();
   }
 
@@ -49,5 +51,11 @@ public class BattlePreparationDuellistController implements WizardStepProvider {
                             .collect(Collectors.toList());
       wizardStep.setChildren(groups);
     };
+  }
+
+  private void updateNextText(StringProperty text) {
+    if (wizardStep.hasNoNext()) {
+      text.set("Výběr akcí");
+    }
   }
 }

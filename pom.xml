@@ -206,6 +206,7 @@
         <module>demo-home-screen</module>
         <module>demo-bindings</module>
         <module>demo-wizard</module>
+        <module>demo-wizard-text</module>
     </modules>
 
 </project>

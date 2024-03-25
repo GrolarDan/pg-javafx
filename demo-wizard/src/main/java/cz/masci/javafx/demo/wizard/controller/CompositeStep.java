@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CompositeStep implements WizardStep {
-  // TODO Enable go to specific step position
   // TODO Change next/prevText based on step
   private final static int BEFORE_INTERVAL = -1;
   protected WizardStep currentStep;
@@ -174,10 +173,10 @@ public class CompositeStep implements WizardStep {
 
   private void updateWizardViewModel(WizardViewModel wizardViewModel) {
     consumeIfNotNull(updateTitle, wizardViewModel.titleProperty());
-    consumeIfNotNull(updateNextText, wizardViewModel.nextTextProperty());
-    consumeIfNotNull(updatePrevText, wizardViewModel.prevTextProperty());
-    consumeIfNotNull(updateNextDisable, wizardViewModel.nextDisableProperty());
-    consumeIfNotNull(updatePrevDisable, wizardViewModel.prevDisableProperty());
+    updateNextText.accept(wizardViewModel.nextTextProperty());
+    updatePrevText.accept(wizardViewModel.prevTextProperty());
+    updateNextDisable.accept(wizardViewModel.nextDisableProperty());
+    updatePrevDisable.accept(wizardViewModel.prevDisableProperty());
   }
 
   private void unbindWizardViewModel(WizardViewModel wizardViewModel) {
@@ -189,11 +188,15 @@ public class CompositeStep implements WizardStep {
   }
 
   private void defaultNextText(StringProperty nextText) {
-    nextText.set("Další");
+    if (hasNoNext()) {
+      nextText.set("Další");
+    }
   }
 
   private void defaultPrevText(StringProperty prevText) {
-    prevText.set("Předchozí");
+    if (hasNoPrevious()) {
+      prevText.set("Předchozí");
+    }
   }
 
   private void defaultNextDisable(BooleanProperty nextDisable) {

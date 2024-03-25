@@ -1,6 +1,7 @@
 package cz.masci.javafx.demo.wizard.controller;
 
 import cz.masci.javafx.demo.wizard.model.WizardViewModel;
+import java.util.Objects;
 import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
@@ -27,8 +28,8 @@ public class LeafStep implements WizardStep {
     this.name = name;
     this.view = view;
     this.updateTitle = updateTitle;
-    this.updateNextText = updateNextText;
-    this.updatePrevText = updatePrevText;
+    this.updateNextText = Objects.requireNonNullElse(updateNextText, this::defaultNextText);
+    this.updatePrevText = Objects.requireNonNullElse(updatePrevText, this::defaultPrevText);
     this.updateNextDisable = updateNextDisable;
     this.updatePrevDisable = updatePrevDisable;
   }
@@ -94,6 +95,17 @@ public class LeafStep implements WizardStep {
     unbindIfBound(wizardViewModel.prevDisableProperty());
   }
 
+  private void defaultNextText(StringProperty nextText) {
+    if (hasNoNext()) {
+      nextText.set("Další");
+    }
+  }
+
+  private void defaultPrevText(StringProperty prevText) {
+    if (hasNoPrevious()) {
+      prevText.set("Předchozí");
+    }
+  }
   private <T> void consumeIfNotNull(Consumer<T> consumer, T value) {
     if (consumer != null) {
       consumer.accept(value);
