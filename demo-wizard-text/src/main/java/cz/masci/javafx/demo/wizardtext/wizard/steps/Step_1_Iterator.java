@@ -17,7 +17,7 @@ public class Step_1_Iterator implements IteratorStep {
   @Setter
   private IteratorStep parent;
 
-  private final List<LeafStep<IteratorStep>> steps = new ArrayList<>();
+  private final List<LeafStep> steps = new ArrayList<>();
   private int currentIdx = -1;
   private IteratorStep currentChildIterator;
   private boolean doStep = false;
@@ -25,9 +25,11 @@ public class Step_1_Iterator implements IteratorStep {
   public Step_1_Iterator() {
   }
 
-  public void addStep(LeafStep<IteratorStep> step) {
+  public void addStep(LeafStep step) {
     steps.add(step);
-    step.setParent(this);
+    if (step instanceof IteratorStep iteratorStep) {
+      iteratorStep.setParent(this);
+    }
   }
 
   public String getNextText() {
@@ -39,7 +41,7 @@ public class Step_1_Iterator implements IteratorStep {
   }
 
   @Override
-  public LeafStep<IteratorStep> next() {
+  public LeafStep next() {
     // is already last step
     if (currentIdx >= steps.size()) {
       doStep = false;
@@ -77,7 +79,7 @@ public class Step_1_Iterator implements IteratorStep {
   }
 
   @Override
-  public LeafStep<IteratorStep> prev() {
+  public LeafStep prev() {
     // is already first step
     if (currentIdx < 0) {
       doStep = false;
@@ -130,10 +132,11 @@ public class Step_1_Iterator implements IteratorStep {
   @Override
   public String nextText() {
     String text = null;
-    if (currentIdx < steps.size() - 1) {
+    if (prepareChildIterator()) {
+      text = currentChildIterator.nextText();
+    }
+    if (text == null && currentIdx < steps.size() - 1) {
       text = getNextText();
-    } else if (parent != null) {
-      text = parent.nextText();
     }
     return text;
   }
@@ -141,10 +144,11 @@ public class Step_1_Iterator implements IteratorStep {
   @Override
   public String prevText() {
     String text = null;
-    if (currentIdx > 0) {
+    if (prepareChildIterator()) {
+      text = currentChildIterator.prevText();
+    }
+    if (text == null && currentIdx > 0) {
       text = getPrevText();
-    } else if (parent != null) {
-      text = parent.prevText();
     }
     return text;
   }

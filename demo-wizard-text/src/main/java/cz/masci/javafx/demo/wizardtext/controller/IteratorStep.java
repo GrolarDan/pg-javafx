@@ -1,11 +1,15 @@
 package cz.masci.javafx.demo.wizardtext.controller;
 
-public interface IteratorStep extends LeafStep<IteratorStep> {
-//  void setParent(IteratorStep parent);
-  LeafStep<IteratorStep> next();
+public interface IteratorStep extends LeafStep {
+  void setParent(IteratorStep parent);
+  LeafStep next();
   boolean hasNext();
-  LeafStep<IteratorStep> prev();
+  LeafStep prev();
   boolean hasPrev();
+
+  String nextText();
+
+  String prevText();
 
 //  BooleanExpression nextDisabled();
 //
