@@ -7,15 +7,17 @@ import java.util.List;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import lombok.Getter;
 import lombok.Setter;
 
 public class Step_1_Iterator implements IteratorStep {
 
   private final static BooleanProperty TRUE_PROPERTY = new SimpleBooleanProperty(true);
+  @Getter
   @Setter
   private IteratorStep parent;
 
-  private final List<LeafStep> steps = new ArrayList<>();
+  private final List<LeafStep<IteratorStep>> steps = new ArrayList<>();
   private int currentIdx = -1;
   private IteratorStep currentChildIterator;
   private boolean doStep = false;
@@ -23,15 +25,21 @@ public class Step_1_Iterator implements IteratorStep {
   public Step_1_Iterator() {
   }
 
-  public void addStep(LeafStep step) {
+  public void addStep(LeafStep<IteratorStep> step) {
     steps.add(step);
-    if (step instanceof IteratorStep iteratorStep) {
-      iteratorStep.setParent(this);
-    }
+    step.setParent(this);
+  }
+
+  public String getNextText() {
+    return "Next Step 1";
+  }
+
+  public String getPrevText() {
+    return "Previous Step 1";
   }
 
   @Override
-  public LeafStep next() {
+  public LeafStep<IteratorStep> next() {
     // is already last step
     if (currentIdx >= steps.size()) {
       doStep = false;
@@ -69,7 +77,7 @@ public class Step_1_Iterator implements IteratorStep {
   }
 
   @Override
-  public LeafStep prev() {
+  public LeafStep<IteratorStep> prev() {
     // is already first step
     if (currentIdx < 0) {
       doStep = false;
@@ -117,6 +125,24 @@ public class Step_1_Iterator implements IteratorStep {
   @Override
   public BooleanExpression isValid() {
     return isValid(prepareChildIterator());
+  }
+
+  @Override
+  public String nextText() {
+    String text = null;
+    if (prepareChildIterator()) {
+      text = currentChildIterator.nextText();
+    }
+    return (text == null && currentIdx < steps.size()) ? getNextText() : null;
+  }
+
+  @Override
+  public String prevText() {
+    String text = null;
+    if (prepareChildIterator()) {
+      text = currentChildIterator.prevText();
+    }
+    return (text == null && currentIdx < steps.size()) ? getPrevText() : null;
   }
 
   protected boolean isValidIndex(int index) {
