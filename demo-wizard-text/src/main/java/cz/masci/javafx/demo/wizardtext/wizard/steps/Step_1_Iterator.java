@@ -130,19 +130,23 @@ public class Step_1_Iterator implements IteratorStep {
   @Override
   public String nextText() {
     String text = null;
-    if (prepareChildIterator()) {
-      text = currentChildIterator.nextText();
+    if (currentIdx < steps.size() - 1) {
+      text = getNextText();
+    } else if (parent != null) {
+      text = parent.nextText();
     }
-    return (text == null && currentIdx < steps.size()) ? getNextText() : null;
+    return text;
   }
 
   @Override
   public String prevText() {
     String text = null;
-    if (prepareChildIterator()) {
-      text = currentChildIterator.prevText();
+    if (currentIdx > 0) {
+      text = getPrevText();
+    } else if (parent != null) {
+      text = parent.prevText();
     }
-    return (text == null && currentIdx < steps.size()) ? getPrevText() : null;
+    return text;
   }
 
   protected boolean isValidIndex(int index) {
