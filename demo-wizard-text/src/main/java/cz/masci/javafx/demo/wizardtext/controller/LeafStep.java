@@ -4,6 +4,14 @@ import java.util.Optional;
 
 public interface LeafStep extends HierarchicalStep {
 
+  String getTitle();
+
+  default String title() {
+    return Optional.ofNullable(getParent())
+                   .map(parent -> String.join(parent.title(), getTitle()))
+                   .orElse("N/A");
+  }
+
   default String prevText() {
     return Optional.ofNullable(getParent())
                    .map(HierarchicalStep::prevText)
@@ -15,5 +23,4 @@ public interface LeafStep extends HierarchicalStep {
                    .map(HierarchicalStep::nextText)
                    .orElse(null);
   }
-
 }

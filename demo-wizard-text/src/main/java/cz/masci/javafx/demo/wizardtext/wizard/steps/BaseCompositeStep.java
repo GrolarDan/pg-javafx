@@ -9,7 +9,7 @@ import javafx.beans.binding.BooleanExpression;
 import lombok.Getter;
 import lombok.Setter;
 
-public class BaseCompositeStep implements CompositeStep {
+public abstract class BaseCompositeStep implements CompositeStep {
 
   @Setter
   @Getter
@@ -21,13 +21,17 @@ public class BaseCompositeStep implements CompositeStep {
   private CompositeStep currentChildIterator;
   private boolean doStep = false;
 
+  protected abstract String getPrevText();
+  protected abstract String getNextText();
+
   @Override
   public Step prev() {
+//    System.out.printf("Call prev(): %s, idx: %d, doStep: %s, childIterator: %s\n", getClass(), currentIdx, doStep, currentChildIterator);
     // is already first step
     if (currentIdx < 0) {
       doStep = false;
       currentChildIterator = null;
-      return applyOnIteratorStepOrNull(parent, CompositeStep::prev);
+      return applyOnCompositeStepOrNull(parent, CompositeStep::prev);
     }
 
     boolean hasChildIterator = prepareChildIterator();
@@ -40,6 +44,7 @@ public class BaseCompositeStep implements CompositeStep {
     if (isValid(hasChildIterator).get() && hasPrev(hasChildIterator)) {
       if (currentChildIterator != null) {
         var prevStep = currentChildIterator.prev();
+        doStep = false;
         currentChildIterator = null;
         return prevStep;
       } else {
@@ -56,11 +61,12 @@ public class BaseCompositeStep implements CompositeStep {
 
   @Override
   public Step next() {
+//    System.out.printf("Call next(): %s, idx: %d, doStep: %s, childIterator: %s\n", getClass(), currentIdx, doStep, currentChildIterator);
     // is already last step
     if (currentIdx >= steps.size()) {
       doStep = false;
       currentChildIterator = null;
-      return applyOnIteratorStepOrNull(parent, CompositeStep::next);
+      return applyOnCompositeStepOrNull(parent, CompositeStep::next);
     }
 
     boolean hasChildIterator = prepareChildIterator();
@@ -73,6 +79,7 @@ public class BaseCompositeStep implements CompositeStep {
     if (isValid(hasChildIterator).get() && hasNext(hasChildIterator)) {
       if (currentChildIterator != null) {
         var nextStep = currentChildIterator.next();
+        doStep = false;
         currentChildIterator = null;
         return nextStep;
       } else {
@@ -98,27 +105,12 @@ public class BaseCompositeStep implements CompositeStep {
   }
 
   @Override
-  public String title() {
-    if (prepareChildIterator()) {
-      return currentChildIterator.title();
-    }
-    return "";
-  }
-
-  @Override
-  public BooleanExpression valid() {
-    return isValid(prepareChildIterator());
-  }
-
-  @Override
   public String prevText() {
     String text = null;
-    if (prepareChildIterator()) {
-      text = currentChildIterator.prevText();
-      currentChildIterator = null;
-    }
-    if (text == null && currentIdx > 0) {
+    if (currentIdx > 0) {
       text = getPrevText();
+    } else if (parent != null) {
+      text = parent.prevText();
     }
     return text;
   }
@@ -126,12 +118,10 @@ public class BaseCompositeStep implements CompositeStep {
   @Override
   public String nextText() {
     String text = null;
-    if (prepareChildIterator()) {
-      text = currentChildIterator.nextText();
-      currentChildIterator = null;
-    }
-    if (text == null && currentIdx < steps.size() - 1) {
+    if (currentIdx < steps.size() - 1) {
       text = getNextText();
+    } else if (parent != null) {
+      text = parent.nextText();
     }
     return text;
   }
@@ -139,14 +129,6 @@ public class BaseCompositeStep implements CompositeStep {
   public void addStep(HierarchicalStep step) {
     steps.add(step);
     step.setParent(this);
-  }
-
-  public String getNextText() {
-    return "Next";
-  }
-
-  public String getPrevText() {
-    return "Previous";
   }
 
   protected boolean isValidIndex(int index) {
@@ -176,7 +158,7 @@ public class BaseCompositeStep implements CompositeStep {
       currentChildIterator = null;
       return true;
     }
-    return applyOnIteratorStepOrNull(parent, CompositeStep::hasPrev);
+    return applyOnCompositeStepOrNull(parent, CompositeStep::hasPrev);
   }
 
   private boolean hasNext(boolean hasChildIterator) {
@@ -186,7 +168,7 @@ public class BaseCompositeStep implements CompositeStep {
       currentChildIterator = null;
       return true;
     }
-    return applyOnIteratorStepOrNull(parent, CompositeStep::hasNext);
+    return applyOnCompositeStepOrNull(parent, CompositeStep::hasNext);
   }
 
 }

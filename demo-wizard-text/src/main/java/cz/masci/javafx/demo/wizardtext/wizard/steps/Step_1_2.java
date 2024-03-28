@@ -12,11 +12,7 @@ public class Step_1_2 implements LeafStep {
 
   private final BooleanProperty valid = new SimpleBooleanProperty(true);
   private HierarchicalStep parent;
-
-  @Override
-  public String title() {
-    return "Main Step 1-2";
-  }
+  private String title = "Main Step 1-2";
 
   @Override
   public BooleanExpression valid() {

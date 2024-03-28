@@ -50,5 +50,6 @@ public class WizardTextApp {
     wizard.prev();  // 1-2
     wizard.prev();  // 1-1
     wizard.prev();  // 1-1
+    wizard.prev();  // 1-1
   }
 }
