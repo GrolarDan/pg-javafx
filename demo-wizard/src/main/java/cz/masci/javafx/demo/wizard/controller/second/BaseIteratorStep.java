@@ -1,7 +1,5 @@
-package cz.masci.javafx.demo.wizardtext.wizard.steps;
+package cz.masci.javafx.demo.wizard.controller.second;
 
-import cz.masci.javafx.demo.wizardtext.controller.IteratorStep;
-import cz.masci.javafx.demo.wizardtext.controller.LeafStep;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.BooleanExpression;
@@ -10,7 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Step_0_Iterator implements IteratorStep {
+public class BaseIteratorStep implements IteratorStep {
 
   private final static BooleanProperty TRUE_PROPERTY = new SimpleBooleanProperty(true);
 
@@ -23,7 +21,7 @@ public class Step_0_Iterator implements IteratorStep {
   private IteratorStep currentChildIterator;
   private boolean doStep = false;
 
-  public Step_0_Iterator() {
+  public BaseIteratorStep() {
   }
 
   public void addStep(LeafStep step) {
@@ -57,7 +55,7 @@ public class Step_0_Iterator implements IteratorStep {
         return steps.get(currentIdx);
     }
 
-    if (isValid(hasChildIterator).get() && hasNext(hasChildIterator)) {
+    if (isValid(hasChildIterator).getValue() && hasNext(hasChildIterator)) {
       if (currentChildIterator != null) {
         var nextStep = currentChildIterator.next();
         currentChildIterator = null;
@@ -95,7 +93,7 @@ public class Step_0_Iterator implements IteratorStep {
       return steps.get(currentIdx);
     }
 
-    if (isValid(hasChildIterator).get() && hasPrev(hasChildIterator)) {
+    if (isValid(hasChildIterator).getValue() && hasPrev(hasChildIterator)) {
       if (currentChildIterator != null) {
         var prevStep = currentChildIterator.prev();
         currentChildIterator = null;

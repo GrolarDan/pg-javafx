@@ -1,18 +1,17 @@
 package cz.masci.javafx.demo.wizardtext.wizard.steps;
 
+import cz.masci.javafx.demo.wizardtext.controller.HierarchicalStep;
 import cz.masci.javafx.demo.wizardtext.controller.LeafStep;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 public class Step_3 implements LeafStep {
 
   private final BooleanProperty valid = new SimpleBooleanProperty(true);
-  @Getter
-  @Setter
-  private LeafStep parent;
+  private HierarchicalStep parent;
 
   @Override
   public String title() {
@@ -20,7 +19,7 @@ public class Step_3 implements LeafStep {
   }
 
   @Override
-  public BooleanExpression isValid() {
+  public BooleanExpression valid() {
     return valid;
   }
 

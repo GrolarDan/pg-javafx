@@ -17,10 +17,10 @@
  *  along with Foobar. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package cz.masci.javafx.demo.wizard.controller.test;
+package cz.masci.javafx.demo.wizard.controller.first.test;
 
-import cz.masci.javafx.demo.wizard.controller.LeafStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
+import cz.masci.javafx.demo.wizard.controller.first.LeafStep;
+import cz.masci.javafx.demo.wizard.controller.first.WizardStepProvider;
 import cz.masci.javafx.demo.wizard.view.BattleStepViewBuilder;
 import java.util.function.Consumer;
 import javafx.beans.property.StringProperty;

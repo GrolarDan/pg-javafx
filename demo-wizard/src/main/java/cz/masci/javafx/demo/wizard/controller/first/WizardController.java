@@ -1,4 +1,4 @@
-package cz.masci.javafx.demo.wizard.controller;
+package cz.masci.javafx.demo.wizard.controller.first;
 
 import cz.masci.javafx.demo.wizard.model.WizardViewModel;
 import cz.masci.javafx.demo.wizard.view.WizardViewBuilder;

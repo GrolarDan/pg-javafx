@@ -4,17 +4,17 @@ import cz.masci.javafx.demo.wizardtext.wizard.Wizard;
 import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_1_1;
 import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_1_2;
 import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_1_3;
-import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_1_Iterator;
+import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_1_Composite;
 import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_2;
 import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_3;
-import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_0_Iterator;
+import cz.masci.javafx.demo.wizardtext.wizard.steps.Step_0_Composite;
 
 public class WizardTextApp {
   public static void main(String[] args) {
     var step1step2 = new Step_1_2();
     step1step2.setValid(false);
 
-    var step1Iterator = new Step_1_Iterator();
+    var step1Iterator = new Step_1_Composite();
     step1Iterator.addStep(new Step_1_1());
     step1Iterator.addStep(step1step2);
     step1Iterator.addStep(new Step_1_3());
@@ -25,7 +25,7 @@ public class WizardTextApp {
     var mainStep3 = new Step_3();
     mainStep3.setValid(false);
 
-    var rootStep = new Step_0_Iterator();
+    var rootStep = new Step_0_Composite();
 
     rootStep.addStep(step1Iterator);
     rootStep.addStep(mainStep2);

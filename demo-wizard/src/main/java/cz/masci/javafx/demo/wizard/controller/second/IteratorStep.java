@@ -1,4 +1,6 @@
-package cz.masci.javafx.demo.wizardtext.controller;
+package cz.masci.javafx.demo.wizard.controller.second;
+
+import javafx.scene.layout.Region;
 
 public interface IteratorStep extends LeafStep {
   void setParent(IteratorStep parent);
@@ -11,6 +13,9 @@ public interface IteratorStep extends LeafStep {
 
   String prevText();
 
+  default Region view() {
+    return null;
+  }
 //  BooleanExpression nextDisabled();
 //
 //  BooleanExpression prevDisabled();

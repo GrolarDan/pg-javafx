@@ -1,11 +1,19 @@
 package cz.masci.javafx.demo.wizardtext.controller;
 
-import javafx.beans.binding.BooleanExpression;
+import java.util.Optional;
 
-public interface LeafStep {
-//  String view();
+public interface LeafStep extends HierarchicalStep {
 
-  String title();
+  default String prevText() {
+    return Optional.ofNullable(getParent())
+                   .map(HierarchicalStep::prevText)
+                   .orElse(null);
+  }
 
-  BooleanExpression isValid();
+  default String nextText() {
+    return Optional.ofNullable(getParent())
+                   .map(HierarchicalStep::nextText)
+                   .orElse(null);
+  }
+
 }

@@ -17,28 +17,36 @@
  *  along with Foobar. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package cz.masci.javafx.demo.wizard.controller.test;
+package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.LeafStep;
-import cz.masci.javafx.demo.wizard.controller.WizardStepProvider;
+import cz.masci.javafx.demo.wizard.controller.second.LeafStep;
 import cz.masci.javafx.demo.wizard.view.BattleStepViewBuilder;
-import javafx.beans.property.StringProperty;
+import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.layout.Region;
 import lombok.Getter;
 
 @Getter
-public class BattleController implements WizardStepProvider {
+public class BattleSummaryController implements LeafStep {
 
-  private final LeafStep wizardStep;
+  private final Region view;
 
-  public BattleController() {
-    wizardStep = LeafStep.builder()
-                         .name("Battle")
-                         .view(new BattleStepViewBuilder("Battle").build())
-                         .updateTitle(this::updateTitle)
-                         .build();
+  public BattleSummaryController() {
+    this.view = new BattleStepViewBuilder("Battle Summary").build();
   }
 
-  private void updateTitle(StringProperty title) {
-    title.set("Battle");
+  @Override
+  public Region view() {
+    return view;
+  }
+
+  @Override
+  public String title() {
+    return "Battle Summary";
+  }
+
+  @Override
+  public BooleanExpression isValid() {
+    return new SimpleBooleanProperty(true);
   }
 }

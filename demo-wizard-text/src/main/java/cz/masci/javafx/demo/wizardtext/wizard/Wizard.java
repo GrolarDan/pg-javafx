@@ -1,13 +1,13 @@
 package cz.masci.javafx.demo.wizardtext.wizard;
 
-import cz.masci.javafx.demo.wizardtext.controller.IteratorStep;
-import cz.masci.javafx.demo.wizardtext.controller.LeafStep;
+import cz.masci.javafx.demo.wizardtext.controller.CompositeStep;
+import cz.masci.javafx.demo.wizardtext.controller.Step;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class Wizard {
 
-  private final IteratorStep root;
+  private final CompositeStep root;
 
   public void next() {
     var step = root.next();
@@ -27,7 +27,7 @@ public class Wizard {
     }
   }
 
-  private void printStepDescription(LeafStep step, String direction) {
+  private void printStepDescription(Step step, String direction) {
     System.out.println("==============================");
     System.out.printf("Moved to %s step\n", direction);
     System.out.println("\tStep INFO:");
@@ -36,6 +36,6 @@ public class Wizard {
     System.out.printf("\t\tNEXT TEXT: %s\n", root.nextText());
 //    System.out.printf("\t\tNEXT DISABLED: %s\n", step.nextDisabled().get());
 //    System.out.printf("\t\tPREV DISABLED: %s\n", step.prevDisabled().get());
-    System.out.printf("\t\tIS VALID: %s\n", step.isValid() != null ? step.isValid().get() : "N/A");
+    System.out.printf("\t\tIS VALID: %s\n", step.valid() != null ? step.valid().get() : "N/A");
   }
 }
