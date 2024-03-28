@@ -8,44 +8,44 @@ import javafx.scene.layout.Region;
 public class WizardController {
 
   private final WizardViewBuilder builder;
-  private final IteratorStep root;
+  private final CompositeStep root;
   private final WizardViewModel wizardViewModel;
 
-  public WizardController(IteratorStep root) {
+  public WizardController(CompositeStep root) {
     wizardViewModel = new WizardViewModel();
     builder = new WizardViewBuilder(this::getPrevView, this::getNextView, wizardViewModel);
     this.root = root;
   }
 
   public Region getView() {
-    LeafStep step = root.next();
+    Step step = root.next();
     updateWizardViewModel(step);
     return builder.build(step.view());
   }
 
   private Optional<Region> getNextView() {
-    LeafStep step = root.next();
+    Step step = root.next();
     updateWizardViewModel(step);
     return Optional.ofNullable(step.view());
   }
 
   private Optional<Region> getPrevView() {
-    LeafStep step = root.prev();
+    Step step = root.prev();
     updateWizardViewModel(step);
     return Optional.ofNullable(step.view());
   }
 
-  private void updateWizardViewModel(LeafStep step) {
+  private void updateWizardViewModel(Step step) {
     wizardViewModel.titleProperty().set(step.title());
-    wizardViewModel.prevTextProperty().set(root.prevText());
+    wizardViewModel.prevTextProperty().set(step.prevText());
     if (wizardViewModel.prevDisableProperty().isBound()) {
       wizardViewModel.prevDisableProperty().unbind();
     }
-    wizardViewModel.prevDisableProperty().bind(step.isValid());
-    wizardViewModel.nextTextProperty().set(root.nextText());
+    wizardViewModel.prevDisableProperty().bind(step.valid().not());
+    wizardViewModel.nextTextProperty().set(step.nextText());
     if (wizardViewModel.nextDisableProperty().isBound()) {
       wizardViewModel.nextDisableProperty().unbind();
     }
-    wizardViewModel.nextDisableProperty().bind(step.isValid());
+    wizardViewModel.nextDisableProperty().bind(step.valid().not());
   }
 }

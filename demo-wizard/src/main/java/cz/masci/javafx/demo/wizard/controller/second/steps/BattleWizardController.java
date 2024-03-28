@@ -19,13 +19,11 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.BaseIteratorStep;
-import lombok.Getter;
+import cz.masci.javafx.demo.wizard.controller.second.BaseCompositeStep;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Getter
-public class BattleWizardController extends BaseIteratorStep {
+public class BattleWizardController extends BaseCompositeStep {
 
   public BattleWizardController() {
     addStep(new BattlePreparationController());
@@ -34,4 +32,13 @@ public class BattleWizardController extends BaseIteratorStep {
     addStep(new BattleSummaryController());
   }
 
+  @Override
+  protected String getPrevText() {
+    return "Předchozí";
+  }
+
+  @Override
+  protected String getNextText() {
+    return "Další";
+  }
 }

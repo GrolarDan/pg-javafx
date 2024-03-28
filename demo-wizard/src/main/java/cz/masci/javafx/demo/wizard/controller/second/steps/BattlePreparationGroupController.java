@@ -19,37 +19,22 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.LeafStep;
+import cz.masci.javafx.demo.wizard.controller.second.SimpleLeafStep;
 import cz.masci.javafx.demo.wizard.view.BattlePreparationGroupStepViewBuilder;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.IntegerProperty;
-import javafx.scene.layout.Region;
-import lombok.Getter;
 
-@Getter
-public class BattlePreparationGroupController implements LeafStep {
+public class BattlePreparationGroupController extends SimpleLeafStep {
 
-  private final Region view;
   private final IntegerProperty groupCount;
 
   public BattlePreparationGroupController(IntegerProperty groupCount) {
-    this.view = new BattlePreparationGroupStepViewBuilder(groupCount).build();
+    super("Skupiny", new BattlePreparationGroupStepViewBuilder(groupCount).build());
     this.groupCount = groupCount;
   }
 
   @Override
-  public Region view() {
-    return view;
-  }
-
-  @Override
-  public String title() {
-    return "Skupiny";
-  }
-
-  @Override
-  public BooleanExpression isValid() {
-    return Bindings.or(groupCount.asObject().isNull(), groupCount.lessThan(2));
+  public BooleanExpression valid() {
+    return groupCount.asObject().isNotNull().and(groupCount.greaterThanOrEqualTo(2));
   }
 }

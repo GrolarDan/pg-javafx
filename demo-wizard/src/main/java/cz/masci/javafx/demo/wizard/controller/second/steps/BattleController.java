@@ -19,33 +19,12 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.LeafStep;
+import cz.masci.javafx.demo.wizard.controller.second.SimpleLeafStep;
 import cz.masci.javafx.demo.wizard.view.BattleStepViewBuilder;
-import javafx.beans.binding.BooleanExpression;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.layout.Region;
-import lombok.Getter;
 
-@Getter
-public class BattleController implements LeafStep {
+public class BattleController extends SimpleLeafStep {
 
-  private final Region view;
   public BattleController() {
-    this.view = new BattleStepViewBuilder("Battle").build();
-  }
-
-  @Override
-  public Region view() {
-    return view;
-  }
-
-  @Override
-  public String title() {
-    return "Battle";
-  }
-
-  @Override
-  public BooleanExpression isValid() {
-    return new SimpleBooleanProperty(true);
+    super("Battle", new BattleStepViewBuilder("Battle").build());
   }
 }

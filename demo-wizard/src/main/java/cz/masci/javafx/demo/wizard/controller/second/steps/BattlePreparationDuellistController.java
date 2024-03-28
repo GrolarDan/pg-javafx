@@ -19,14 +19,12 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.BaseIteratorStep;
-import cz.masci.javafx.demo.wizard.controller.second.LeafStep;
+import cz.masci.javafx.demo.wizard.controller.second.BaseCompositeStep;
+import cz.masci.javafx.demo.wizard.controller.second.Step;
 import java.util.stream.IntStream;
 import javafx.beans.property.IntegerProperty;
-import lombok.Getter;
 
-@Getter
-public class BattlePreparationDuellistController extends BaseIteratorStep {
+public class BattlePreparationDuellistController extends BaseCompositeStep {
 
   private final IntegerProperty groupCount;
 
@@ -35,13 +33,24 @@ public class BattlePreparationDuellistController extends BaseIteratorStep {
   }
 
   @Override
-  public LeafStep next() {
+  public Step next() {
     if (getCurrentIdx() < 0) {
+      clearSteps();
       IntStream.range(0, groupCount.get())
-                            .mapToObj(i -> String.format("Skupina %d", i + 1))
-                            .map(BattlePreparationDuellistChildController::new)
-                            .forEach(this::addStep);
+               .mapToObj(i -> String.format("Skupina %d", i + 1))
+               .map(BattlePreparationDuellistChildController::new)
+               .forEach(this::addStep);
     }
     return super.next();
+  }
+
+  @Override
+  protected String getPrevText() {
+    return "Předchozí";
+  }
+
+  @Override
+  protected String getNextText() {
+    return "Další";
   }
 }

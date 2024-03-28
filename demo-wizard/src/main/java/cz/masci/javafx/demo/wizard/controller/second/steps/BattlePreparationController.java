@@ -19,13 +19,11 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.BaseIteratorStep;
+import cz.masci.javafx.demo.wizard.controller.second.BaseCompositeStep;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import lombok.Getter;
 
-@Getter
-public class BattlePreparationController extends BaseIteratorStep {
+public class BattlePreparationController extends BaseCompositeStep {
 
   public BattlePreparationController() {
     IntegerProperty groupCount = new SimpleIntegerProperty(0);
@@ -33,4 +31,13 @@ public class BattlePreparationController extends BaseIteratorStep {
     this.addStep(new BattlePreparationDuellistController(groupCount));
   }
 
+  @Override
+  protected String getPrevText() {
+    return "Předchozí";
+  }
+
+  @Override
+  protected String getNextText() {
+    return "Další";
+  }
 }

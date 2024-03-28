@@ -1,12 +1,18 @@
 package cz.masci.javafx.demo.wizard.controller.second;
 
-import javafx.beans.binding.BooleanExpression;
-import javafx.scene.layout.Region;
+import java.util.Optional;
 
-public interface LeafStep {
-  Region view();
+public interface LeafStep extends HierarchicalStep {
 
-  String title();
+  default String prevText() {
+    return Optional.ofNullable(getParent())
+                   .map(HierarchicalStep::prevText)
+                   .orElse(null);
+  }
 
-  BooleanExpression isValid();
+  default String nextText() {
+    return Optional.ofNullable(getParent())
+                   .map(HierarchicalStep::nextText)
+                   .orElse(null);
+  }
 }
