@@ -19,11 +19,11 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.BaseCompositeStep;
+import cz.masci.javafx.demo.wizard.controller.second.SimpleCompositeStep;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-public class BattlePreparationController extends BaseCompositeStep {
+public class BattlePreparationController extends SimpleCompositeStep {
 
   public BattlePreparationController() {
     IntegerProperty groupCount = new SimpleIntegerProperty(0);
@@ -32,12 +32,17 @@ public class BattlePreparationController extends BaseCompositeStep {
   }
 
   @Override
+  public String title() {
+    return "Preparation";
+  }
+
+  @Override
   protected String getPrevText() {
-    return "Předchozí";
+    return getCurrentIdx() == 1 ? "Zrušit bitvu" : "";
   }
 
   @Override
   protected String getNextText() {
-    return "Další";
+    return getCurrentIdx() == 0 ? "Bojovníci" : "Další";
   }
 }

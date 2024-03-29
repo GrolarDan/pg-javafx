@@ -19,12 +19,12 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.BaseCompositeStep;
+import cz.masci.javafx.demo.wizard.controller.second.SimpleCompositeStep;
 import cz.masci.javafx.demo.wizard.controller.second.Step;
 import java.util.stream.IntStream;
 import javafx.beans.property.IntegerProperty;
 
-public class BattlePreparationDuellistController extends BaseCompositeStep {
+public class BattlePreparationDuellistController extends SimpleCompositeStep {
 
   private final IntegerProperty groupCount;
 

@@ -12,11 +12,6 @@ public interface CompositeStep extends HierarchicalStep {
 
   boolean hasNext();
 
-  @Override
-  default String title() {
-    return "";
-  }
-
   // Composite step should not have a view
   @Override
   default Region view() {

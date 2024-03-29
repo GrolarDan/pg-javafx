@@ -18,4 +18,11 @@ public interface HierarchicalStep extends Step {
                    .map(Step::valid)
                    .orElse(TRUE_PROPERTY);
   }
+
+  @Override
+  default String title() {
+    return Optional.ofNullable(getParent())
+                   .map(Step::title)
+                   .orElse(null);
+  }
 }

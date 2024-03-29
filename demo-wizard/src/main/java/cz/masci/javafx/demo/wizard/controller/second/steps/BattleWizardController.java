@@ -19,11 +19,11 @@
 
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
-import cz.masci.javafx.demo.wizard.controller.second.BaseCompositeStep;
+import cz.masci.javafx.demo.wizard.controller.second.SimpleCompositeStep;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class BattleWizardController extends BaseCompositeStep {
+public class BattleWizardController extends SimpleCompositeStep {
 
   public BattleWizardController() {
     addStep(new BattlePreparationController());
@@ -34,11 +34,21 @@ public class BattleWizardController extends BaseCompositeStep {
 
   @Override
   protected String getPrevText() {
-    return "Předchozí";
+    return switch (getCurrentIdx()) {
+      case 1 -> "Bojovníci";
+      case 2 -> "Zrušit kolo";
+      case 3 -> "Bitva";
+      default -> null;
+    };
   }
 
   @Override
   protected String getNextText() {
-    return "Další";
+    return switch (getCurrentIdx()) {
+      case 0 -> "Přehled bojovníků";
+      case 1 -> "Spustit bitvu";
+      case 2 -> "Přehled bitvy";
+      default -> null;
+    };
   }
 }

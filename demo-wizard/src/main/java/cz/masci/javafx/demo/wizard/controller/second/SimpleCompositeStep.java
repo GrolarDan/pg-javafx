@@ -6,7 +6,7 @@ import javafx.beans.binding.BooleanExpression;
 import lombok.Getter;
 import lombok.Setter;
 
-public abstract class BaseCompositeStep implements CompositeStep {
+public abstract class SimpleCompositeStep implements CompositeStep {
 
   @Setter
   @Getter
@@ -19,6 +19,7 @@ public abstract class BaseCompositeStep implements CompositeStep {
   private boolean doStep = false;
 
   protected abstract String getPrevText();
+
   protected abstract String getNextText();
 
   @Override
@@ -153,7 +154,8 @@ public abstract class BaseCompositeStep implements CompositeStep {
     if (hasChildIterator) {
       return currentChildIterator.valid();
     }
-    return isValidIndex(currentIdx) ? steps.get(currentIdx).valid() : TRUE_PROPERTY;
+    return isValidIndex(currentIdx) ? steps.get(currentIdx)
+                                           .valid() : TRUE_PROPERTY;
   }
 
   private boolean hasPrev(boolean hasChildIterator) {
@@ -175,5 +177,4 @@ public abstract class BaseCompositeStep implements CompositeStep {
     }
     return applyOnCompositeStepOrNull(parent, CompositeStep::hasNext);
   }
-
 }

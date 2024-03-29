@@ -18,7 +18,7 @@ public class SimpleLeafStep implements LeafStep {
   @Override
   public String title() {
     return Optional.ofNullable(getParent())
-                   .map(parent -> String.join(parent.title(), title))
+                   .map(parent -> parent.title() == null || parent.title().isBlank() ? title : String.join(" - ", parent.title(), title))
                    .orElse("N/A");
   }
 
