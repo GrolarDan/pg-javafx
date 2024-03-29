@@ -8,6 +8,10 @@ public interface CompositeStep extends HierarchicalStep {
 
   Step next();
 
+  Step goToStep(int index);
+
+  void reset();
+
   boolean hasPrev();
 
   boolean hasNext();

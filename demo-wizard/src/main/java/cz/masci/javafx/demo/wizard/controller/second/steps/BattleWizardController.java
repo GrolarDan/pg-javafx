@@ -20,6 +20,7 @@
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
 import cz.masci.javafx.demo.wizard.controller.second.SimpleCompositeStep;
+import cz.masci.javafx.demo.wizard.controller.second.Step;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 public class BattleWizardController extends SimpleCompositeStep {
 
   private final BooleanProperty prevDisabled = new SimpleBooleanProperty(false);
-  private final BooleanProperty nextDisabled = new SimpleBooleanProperty(false);
 
   public BattleWizardController() {
     addStep(new BattlePreparationController());
@@ -49,11 +49,17 @@ public class BattleWizardController extends SimpleCompositeStep {
   }
 
   @Override
+  public String nextText() {
+    return getNextText();
+  }
+
+  @Override
   protected String getNextText() {
     return switch (getCurrentIdx()) {
       case 0 -> "Přehled bojovníků";
       case 1 -> "Spustit bitvu";
       case 2 -> "Přehled bitvy";
+      case 3 -> "Bitva";
       default -> null;
     };
   }
@@ -65,8 +71,19 @@ public class BattleWizardController extends SimpleCompositeStep {
   }
 
   @Override
-  public BooleanExpression nextDisabled() {
-    nextDisabled.set(!hasNext());
-    return nextDisabled;
+  public Step prev() {
+    if (!isDoStep() && getCurrentIdx() == 3) {
+      return goToStep(2);
+    }
+    return super.prev();
   }
+
+  @Override
+  public Step next() {
+    if (!isDoStep() && getCurrentIdx() == 3) {
+      return goToStep(2);
+    }
+    return super.next();
+  }
+
 }

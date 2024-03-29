@@ -15,8 +15,9 @@ public abstract class SimpleCompositeStep implements CompositeStep {
 
   @Getter
   private int currentIdx = -1;
-  private CompositeStep currentChildIterator;
+  @Getter
   private boolean doStep = false;
+  private CompositeStep currentChildIterator;
 
   protected abstract String getPrevText();
 
@@ -90,6 +91,30 @@ public abstract class SimpleCompositeStep implements CompositeStep {
     doStep = false;
     currentChildIterator = null;
     return null;
+  }
+
+  @Override
+  public Step goToStep(int index) {
+    System.out.printf("Call goToStep(): %s, current idx: %d, new idx: %d\n", getClass(), currentIdx, index);
+    if (!isValidIndex(index)) {
+      return null;
+    }
+
+    currentIdx = index;
+
+    if (prepareChildIterator()) {
+      currentChildIterator.reset();
+      var step = currentChildIterator.next();
+      currentChildIterator = null;
+      return step;
+    }
+
+    return steps.get(currentIdx);
+  }
+
+  @Override
+  public void reset() {
+    currentIdx = -1;
   }
 
   @Override
