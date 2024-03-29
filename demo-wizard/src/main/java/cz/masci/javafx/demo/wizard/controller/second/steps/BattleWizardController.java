@@ -20,10 +20,16 @@
 package cz.masci.javafx.demo.wizard.controller.second.steps;
 
 import cz.masci.javafx.demo.wizard.controller.second.SimpleCompositeStep;
+import javafx.beans.binding.BooleanExpression;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class BattleWizardController extends SimpleCompositeStep {
+
+  private final BooleanProperty prevDisabled = new SimpleBooleanProperty(false);
+  private final BooleanProperty nextDisabled = new SimpleBooleanProperty(false);
 
   public BattleWizardController() {
     addStep(new BattlePreparationController());
@@ -50,5 +56,17 @@ public class BattleWizardController extends SimpleCompositeStep {
       case 2 -> "Přehled bitvy";
       default -> null;
     };
+  }
+
+  @Override
+  public BooleanExpression prevDisabled() {
+    prevDisabled.set(!hasPrev());
+    return prevDisabled;
+  }
+
+  @Override
+  public BooleanExpression nextDisabled() {
+    nextDisabled.set(!hasNext());
+    return nextDisabled;
   }
 }

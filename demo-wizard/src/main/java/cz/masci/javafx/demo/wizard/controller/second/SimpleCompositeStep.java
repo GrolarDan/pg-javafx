@@ -29,7 +29,7 @@ public abstract class SimpleCompositeStep implements CompositeStep {
     if (currentIdx < 0) {
       doStep = false;
       currentChildIterator = null;
-      return applyOnCompositeStepOrNull(parent, CompositeStep::prev);
+      return applyOnCompositeStepOr(parent, CompositeStep::prev, null);
     }
 
     boolean hasChildIterator = prepareChildIterator();
@@ -39,8 +39,8 @@ public abstract class SimpleCompositeStep implements CompositeStep {
       return steps.get(currentIdx);
     }
 
-    if (isValid(hasChildIterator).get() && hasPrev(hasChildIterator)) {
-      if (currentChildIterator != null) {
+    if (isValid(hasChildIterator).get()) {
+      if (currentChildIterator != null && hasChildIterator) {
         var prevStep = currentChildIterator.prev();
         doStep = false;
         currentChildIterator = null;
@@ -64,7 +64,7 @@ public abstract class SimpleCompositeStep implements CompositeStep {
     if (currentIdx >= steps.size()) {
       doStep = false;
       currentChildIterator = null;
-      return applyOnCompositeStepOrNull(parent, CompositeStep::next);
+      return applyOnCompositeStepOr(parent, CompositeStep::next, null);
     }
 
     boolean hasChildIterator = prepareChildIterator();
@@ -74,8 +74,8 @@ public abstract class SimpleCompositeStep implements CompositeStep {
       return steps.get(currentIdx);
     }
 
-    if (isValid(hasChildIterator).get() && hasNext(hasChildIterator)) {
-      if (currentChildIterator != null) {
+    if (isValid(hasChildIterator).get()) {
+      if (currentChildIterator != null && hasChildIterator) {
         var nextStep = currentChildIterator.next();
         doStep = false;
         currentChildIterator = null;
@@ -160,21 +160,21 @@ public abstract class SimpleCompositeStep implements CompositeStep {
 
   private boolean hasPrev(boolean hasChildIterator) {
     if (hasChildIterator) {
-      return currentChildIterator.hasPrev() || currentIdx >= 0;
-    } else if (currentIdx >= 0) {
+      return currentChildIterator.hasPrev() || currentIdx > 0;
+    } else if (currentIdx > 0) {
       currentChildIterator = null;
       return true;
     }
-    return applyOnCompositeStepOrNull(parent, CompositeStep::hasPrev);
+    return false;
   }
 
   private boolean hasNext(boolean hasChildIterator) {
     if (hasChildIterator) {
-      return currentChildIterator.hasNext() || currentIdx < steps.size();
-    } else if (currentIdx < steps.size()) {
+      return currentChildIterator.hasNext() || currentIdx < steps.size() - 1;
+    } else if (currentIdx < steps.size() - 1) {
       currentChildIterator = null;
       return true;
     }
-    return applyOnCompositeStepOrNull(parent, CompositeStep::hasNext);
+    return false;
   }
 }

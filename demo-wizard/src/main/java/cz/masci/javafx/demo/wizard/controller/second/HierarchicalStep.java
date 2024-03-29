@@ -25,4 +25,20 @@ public interface HierarchicalStep extends Step {
                    .map(Step::title)
                    .orElse(null);
   }
+
+  @Override
+  default BooleanExpression prevDisabled() {
+    return Optional.ofNullable(getParent())
+                   .map(Step::prevDisabled)
+                   .map(parentPrevDisabled -> parentPrevDisabled.or(valid().not()))
+                   .orElse(valid().not());
+  }
+
+  @Override
+  default BooleanExpression nextDisabled() {
+    return Optional.ofNullable(getParent())
+                   .map(Step::nextDisabled)
+                   .map(parentNextDisabled -> parentNextDisabled.or(valid().not()))
+                   .orElse(valid().not());
+  }
 }

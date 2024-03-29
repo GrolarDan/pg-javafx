@@ -18,7 +18,7 @@ public interface CompositeStep extends HierarchicalStep {
     return null;
   }
 
-  default <R> R applyOnCompositeStepOrNull(HierarchicalStep step, Function<CompositeStep, R> iteratorStepFunction) {
-    return step instanceof CompositeStep compositeStep ? iteratorStepFunction.apply(compositeStep) : null;
+  default <R> R applyOnCompositeStepOr(HierarchicalStep step, Function<CompositeStep, R> iteratorStepFunction, R defaultValue) {
+    return step instanceof CompositeStep compositeStep ? iteratorStepFunction.apply(compositeStep) : defaultValue;
   }
 }

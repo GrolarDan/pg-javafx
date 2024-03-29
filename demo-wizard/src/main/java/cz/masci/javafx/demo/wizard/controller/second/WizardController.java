@@ -41,11 +41,11 @@ public class WizardController {
     if (wizardViewModel.prevDisableProperty().isBound()) {
       wizardViewModel.prevDisableProperty().unbind();
     }
-    wizardViewModel.prevDisableProperty().bind(step.valid().not());
+    wizardViewModel.prevDisableProperty().bind(step.prevDisabled());
     wizardViewModel.nextTextProperty().set(step.nextText());
     if (wizardViewModel.nextDisableProperty().isBound()) {
       wizardViewModel.nextDisableProperty().unbind();
     }
-    wizardViewModel.nextDisableProperty().bind(step.valid().not());
+    wizardViewModel.nextDisableProperty().bind(step.nextDisabled());
   }
 }

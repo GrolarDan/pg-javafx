@@ -14,4 +14,8 @@ public interface Step {
   String prevText();
 
   String nextText();
+
+  BooleanExpression prevDisabled();
+
+  BooleanExpression nextDisabled();
 }
