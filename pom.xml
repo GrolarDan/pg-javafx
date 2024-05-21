@@ -23,9 +23,9 @@
         <materialfx.version>11.17.0</materialfx.version>
         <dirtyfx.version>0.1.2</dirtyfx.version>
         <reactfx.version>2.0-M5</reactfx.version>
-        <commons.springfx.version>0.0.22</commons.springfx.version>
+        <commons.springfx.version>0.0.25</commons.springfx.version>
 
-        <projectlombok.version>1.18.20</projectlombok.version>
+        <projectlombok.version>1.18.30</projectlombok.version>
         <slf4j.version>1.7.32</slf4j.version>
         <junit.version>5.8.1</junit.version>
         <testfx.version>4.0.17</testfx.version>
@@ -124,6 +124,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.8.2</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

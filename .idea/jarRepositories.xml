@@ -7,6 +7,11 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="artifactory-release" />
+      <option name="name" value="global-maven-release" />
+      <option name="url" value="https://monsternext.jfrog.io/monsternext/global-maven-release" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
@@ -20,6 +25,11 @@
       <option name="id" value="sonatype-public" />
       <option name="name" value="Sonatype public repository" />
       <option name="url" value="https://s01.oss.sonatype.org/content/groups/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="artifactory-snapshot" />
+      <option name="name" value="global-maven-snapshot" />
+      <option name="url" value="https://monsternext.jfrog.io/monsternext/global-maven-snapshot" />
     </remote-repository>
   </component>
 </project>

@@ -1,6 +1,6 @@
 module demo.bindings {
-  requires javafx.controls;
   requires javafx.graphics;
+  requires javafx.base;
   requires commons.springfx.mvci;
   requires dirtyfx;
   requires annotations;
