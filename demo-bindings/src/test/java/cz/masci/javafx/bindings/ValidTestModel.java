@@ -9,6 +9,8 @@ import javafx.beans.property.StringProperty;
 import lombok.Getter;
 
 public class ValidTestModel implements ValidModel {
+  public final static int MIN_AGE = 18;
+
   @Getter
   private final MFXValidator validator = new MFXValidator();
   private final StringProperty name = new SimpleStringProperty();
@@ -16,7 +18,7 @@ public class ValidTestModel implements ValidModel {
 
   public ValidTestModel() {
     validator.constraint("Name is required", name.isNotEmpty());
-    validator.constraint("Age must be 18+", age.greaterThan(18));
+    validator.constraint("Age must be 18+", age.greaterThanOrEqualTo(MIN_AGE));
   }
 
   public String getName() {
