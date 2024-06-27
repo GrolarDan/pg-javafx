@@ -1,0 +1,15 @@
+@import 'MFXColors.css';
+
+.home-screen-button {
+    -fx-border-color: -mfx-purple;
+
+    -fx-text-fill: -mfx-purple;
+    -fx-font-size: 24px;
+}
+
+.home-screen-button:hover,
+.home-screen-button:focused {
+    -fx-background-color: -mfx-purple;
+
+    -fx-text-fill: white;
+}

@@ -7,7 +7,6 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <groupId>cz.masci.javafx</groupId>
   <artifactId>demo-button</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>DEMO: Button</name>
@@ -21,7 +20,7 @@
       <artifactId>javafx-controls</artifactId>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
