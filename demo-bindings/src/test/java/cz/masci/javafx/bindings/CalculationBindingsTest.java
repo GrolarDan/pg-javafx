@@ -14,6 +14,8 @@ import javafx.beans.binding.When;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
@@ -162,6 +164,9 @@ public class CalculationBindingsTest {
     assertFalse(success.get());
     assertEquals(0, finalResult.getValue().getValue());
 
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
     srcA.setValue(10);
     assertTrue(success.get());
     assertEquals(5, finalResult.getValue().getValue());
@@ -174,6 +179,51 @@ public class CalculationBindingsTest {
     assertTrue(success.get());
     assertEquals(1, finalResult.getValue().getValue());
     assertEquals(1, result.getValue().intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation [high level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+
+  @Test
+  void computation_lowLevel() {
+    int baseA = 5;
+    int baseB = 5;
+    int baseC = -5;
+    IntegerProperty srcA = new SimpleIntegerProperty();
+    IntegerProperty srcB = new SimpleIntegerProperty();
+
+    // A = base A + src A
+    IntegerBinding dstA = srcA.add(baseA);
+    // B = base B + src B
+    IntegerBinding dstB = srcB.add(baseB);
+    // A - B
+    NumberBinding result = dstA.subtract(dstB);
+    // success = A - B
+    BooleanBinding success = result.greaterThan(0);
+    ObservableValue<Integer> test = result.add(baseC).map(n -> n.intValue() < 0 ? 1 : n.intValue());
+    ObservableIntegerValue finalResult = new ConditionalIntegerBinding(success, test, 0);
+
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
+    srcA.setValue(10);
+    assertTrue(success.get());
+    assertEquals(5, finalResult.getValue());
+
+    srcB.setValue(20);
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue(9);
+    assertTrue(success.get());
+    assertEquals(1, finalResult.getValue());
+    assertEquals(1, result.getValue().intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation [low level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
   }
   // endregion
 
@@ -212,6 +262,23 @@ public class CalculationBindingsTest {
     }
   }
 
+  private static final class ConditionalIntegerBinding extends IntegerBinding {
 
+    private final ObservableBooleanValue condition;
+    private final ObservableValue<Integer> then;
+    private final Integer otherwise;
+
+    public ConditionalIntegerBinding(ObservableBooleanValue condition, ObservableValue<Integer> then, Integer otherwise) {
+      this.condition = condition;
+      this.then = then;
+      this.otherwise = otherwise;
+      super.bind(condition, then);
+    }
+
+    @Override
+    protected int computeValue() {
+      return condition.get() ? then.getValue() : otherwise;
+    }
+  }
   // endregion
 }
