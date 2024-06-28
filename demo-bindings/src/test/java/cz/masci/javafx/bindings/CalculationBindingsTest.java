@@ -158,27 +158,34 @@ public class CalculationBindingsTest {
     NumberBinding result = dstA.subtract(dstB);
     // success = A - B
     BooleanBinding success = result.greaterThan(0);
-    ObservableValue<Integer> test = result.add(baseC).map(n -> n.intValue() < 0 ? 1 : n.intValue());
-    ObjectBinding<ObservableValue<Integer>> finalResult = new When(success).then(test).otherwise(zero);
+    ObservableValue<Integer> test = result.add(baseC)
+                                          .map(n -> n.intValue() < 0 ? 1 : n.intValue());
+    ObjectBinding<ObservableValue<Integer>> finalResult = new When(success).then(test)
+                                                                           .otherwise(zero);
 
     assertFalse(success.get());
-    assertEquals(0, finalResult.getValue().getValue());
+    assertEquals(0, finalResult.getValue()
+                               .getValue());
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
 
     srcA.setValue(10);
     assertTrue(success.get());
-    assertEquals(5, finalResult.getValue().getValue());
+    assertEquals(5, finalResult.getValue()
+                               .getValue());
 
     srcB.setValue(20);
     assertFalse(success.get());
-    assertEquals(0, finalResult.getValue().getValue());
+    assertEquals(0, finalResult.getValue()
+                               .getValue());
 
     srcB.setValue(9);
     assertTrue(success.get());
-    assertEquals(1, finalResult.getValue().getValue());
-    assertEquals(1, result.getValue().intValue());
+    assertEquals(1, finalResult.getValue()
+                               .getValue());
+    assertEquals(1, result.getValue()
+                          .intValue());
 
     stopWatch.stop();
     System.out.println("Duration - computation [high level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
@@ -200,7 +207,8 @@ public class CalculationBindingsTest {
     NumberBinding result = dstA.subtract(dstB);
     // success = A - B
     BooleanBinding success = result.greaterThan(0);
-    ObservableValue<Integer> test = result.add(baseC).map(n -> n.intValue() < 0 ? 1 : n.intValue());
+    ObservableValue<Integer> test = result.add(baseC)
+                                          .map(n -> n.intValue() < 0 ? 1 : n.intValue());
     ObservableIntegerValue finalResult = new ConditionalIntegerBinding(success, test, 0);
 
     assertFalse(success.get());
@@ -220,10 +228,56 @@ public class CalculationBindingsTest {
     srcB.setValue(9);
     assertTrue(success.get());
     assertEquals(1, finalResult.getValue());
-    assertEquals(1, result.getValue().intValue());
+    assertEquals(1, result.getValue()
+                          .intValue());
 
     stopWatch.stop();
     System.out.println("Duration - computation [low level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+
+  @Test
+  void computation_reactfx() {
+    int baseA = 5;
+    int baseB = 5;
+    int baseC = -5;
+    IntegerProperty srcA = new SimpleIntegerProperty();
+    IntegerProperty srcB = new SimpleIntegerProperty();
+
+    // A = base A + src A
+    Val<Integer> dstA = Val.map(srcA, n -> n.intValue() + baseA);
+    // B = base B + src B
+    Val<Integer> dstB = Val.map(srcB, n -> n.intValue() + baseB);
+    // A - B
+    Val<Integer> result = Val.combine(dstA, dstB, Math::subtractExact);
+    // success = A - B
+    Val<Boolean> success = result.map(n -> n > 0);
+    ObservableValue<Integer> finalResult = success.flatMap(b -> b ? result : null)
+                                                  .map(n -> n + baseC)
+                                                  .map(n -> n < 0 ? 1 : n)
+                                                  .orElseConst(0);
+
+    assertFalse(success.getValue());
+    assertEquals(0, finalResult.getValue());
+
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
+    srcA.setValue(10);
+    assertTrue(success.getValue());
+    assertEquals(5, finalResult.getValue());
+
+    srcB.setValue(20);
+    assertFalse(success.getValue());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue(9);
+    assertTrue(success.getValue());
+    assertEquals(1, finalResult.getValue());
+    assertEquals(1, result.getValue()
+                          .intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation [reactfx]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
   }
   // endregion
 
