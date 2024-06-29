@@ -2,18 +2,25 @@ package cz.masci.javafx.bindings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import cz.masci.springfx.mvci.util.constraint.ConditionUtils;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.When;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
@@ -278,6 +285,102 @@ public class CalculationBindingsTest {
 
     stopWatch.stop();
     System.out.println("Duration - computation [reactfx]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+  // endregion
+
+  // region computation with string
+
+  /**
+   // base A + integer property A = A
+   // base B + integer property B = B
+   // A - B > 0 = success
+   // A - B + base C = D
+   // success ? (D < 0 ? 1 : D) : 0 = result
+
+   // output: {valid, success, result}
+  */
+  @Test
+  void computation_withString_highLevel() {
+    BiFunction<ObservableValue<String>, Integer, IntegerBinding> parseAndAdd = (property, base) -> Bindings.createIntegerBinding(() -> property.getValue() != null ? Integer.parseInt(property.getValue()) : 0, property).add(base);
+
+    int baseA = 5;
+    int baseB = 5;
+    int baseC = -5;
+    StringProperty srcA = new SimpleStringProperty();
+    StringProperty srcB = new SimpleStringProperty();
+
+    // src A and src B are valid numbers
+    BooleanBinding validComputation = ConditionUtils.isNumber(srcA).and(ConditionUtils.isNumber(srcB));
+    // A = base A + src A
+    NumberBinding dstA = Bindings.when(ConditionUtils.isNumber(srcA)).then(parseAndAdd.apply(srcA, baseA)).otherwise(0);
+    // B = base B + src B
+    NumberBinding dstB = Bindings.when(ConditionUtils.isNumber(srcB)).then(parseAndAdd.apply(srcB, baseB)).otherwise(0);
+    // result = A - B
+    NumberBinding result = dstA.subtract(dstB);
+    // success = A - B > 0 when A and B are valid numbers
+    BooleanBinding success = Bindings.when(validComputation).then(result.greaterThan(0)).otherwise(false);
+    // final result = A - B + base C
+    NumberBinding finalResult = Bindings.when(success).then(Bindings.createIntegerBinding(() -> result.intValue() + baseC < 0 ? 1 : result.intValue() + baseC, result)).otherwise(0);
+
+    assertFalse(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
+    srcA.setValue("10");
+    assertFalse(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("20");
+    assertTrue(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("7");
+    assertTrue(validComputation.get());
+    assertTrue(success.get());
+    assertEquals(1, finalResult.getValue());
+    assertEquals(3, result.getValue().intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation [high level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+  // endregion
+
+  // region When
+  @Test
+  void when() {
+    BooleanProperty condition = new SimpleBooleanProperty();
+
+    // int binding
+    NumberBinding intBinding = new When(condition).then(5)
+                                                  .otherwise(6);
+
+    assertEquals(6, intBinding.getValue());
+    condition.set(true);
+    assertEquals(5, intBinding.getValue());
+    condition.set(false);
+
+    // integer property binding
+    NumberBinding intPropertyBinding = new When(condition).then(new SimpleIntegerProperty(5))
+                                                          .otherwise(new SimpleIntegerProperty());
+
+    assertEquals(0, intPropertyBinding.getValue());
+    condition.set(true);
+    assertEquals(5, intPropertyBinding.getValue());
+    condition.set(false);
+
+    // object property binding to accept null
+    ObjectBinding<Integer> objectBinding = new When(condition).then(new SimpleObjectProperty<>(5))
+                                                              .otherwise(new SimpleObjectProperty<>());
+
+    assertNull(objectBinding.getValue());
+    condition.set(true);
+    assertEquals(5, objectBinding.getValue());
+    condition.set(false);
   }
   // endregion
 
