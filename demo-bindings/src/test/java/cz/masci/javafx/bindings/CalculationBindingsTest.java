@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import cz.masci.springfx.mvci.util.constraint.ConditionUtils;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
@@ -23,7 +22,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableIntegerValue;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.reactfx.value.Val;
@@ -155,7 +156,6 @@ public class CalculationBindingsTest {
     int baseC = -5;
     IntegerProperty srcA = new SimpleIntegerProperty();
     IntegerProperty srcB = new SimpleIntegerProperty();
-    ObservableValue<Integer> zero = new SimpleObjectProperty<>(0);
 
     // A = base A + src A
     IntegerBinding dstA = srcA.add(baseA);
@@ -165,32 +165,29 @@ public class CalculationBindingsTest {
     NumberBinding result = dstA.subtract(dstB);
     // success = A - B
     BooleanBinding success = result.greaterThan(0);
-    ObservableValue<Integer> test = result.add(baseC)
-                                          .map(n -> n.intValue() < 0 ? 1 : n.intValue());
-    ObjectBinding<ObservableValue<Integer>> finalResult = new When(success).then(test)
-                                                                           .otherwise(zero);
+    IntegerBinding test = Bindings.createIntegerBinding(() -> {
+      int add = result.intValue() + baseC;
+      return add  < 0 ? 1 : add;
+    }, result);
+    NumberBinding finalResult = new When(success).then(test).otherwise(0);
 
     assertFalse(success.get());
-    assertEquals(0, finalResult.getValue()
-                               .getValue());
+    assertEquals(0, finalResult.getValue());
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
 
     srcA.setValue(10);
     assertTrue(success.get());
-    assertEquals(5, finalResult.getValue()
-                               .getValue());
+    assertEquals(5, finalResult.getValue());
 
     srcB.setValue(20);
     assertFalse(success.get());
-    assertEquals(0, finalResult.getValue()
-                               .getValue());
+    assertEquals(0, finalResult.getValue());
 
     srcB.setValue(9);
     assertTrue(success.get());
-    assertEquals(1, finalResult.getValue()
-                               .getValue());
+    assertEquals(1, finalResult.getValue());
     assertEquals(1, result.getValue()
                           .intValue());
 
@@ -291,18 +288,15 @@ public class CalculationBindingsTest {
   // region computation with string
 
   /**
-   // base A + integer property A = A
-   // base B + integer property B = B
-   // A - B > 0 = success
-   // A - B + base C = D
-   // success ? (D < 0 ? 1 : D) : 0 = result
-
-   // output: {valid, success, result}
+   * base A + integer property A = A
+   * base B + integer property B = B
+   * A - B > 0 = success
+   * A - B + base C = D
+   * success ? (D < 0 ? 1 : D) : 0 = result
+   * output: {valid, success, result}
   */
   @Test
   void computation_withString_highLevel() {
-    BiFunction<ObservableValue<String>, Integer, IntegerBinding> parseAndAdd = (property, base) -> Bindings.createIntegerBinding(() -> property.getValue() != null ? Integer.parseInt(property.getValue()) : 0, property).add(base);
-
     int baseA = 5;
     int baseB = 5;
     int baseC = -5;
@@ -312,9 +306,9 @@ public class CalculationBindingsTest {
     // src A and src B are valid numbers
     BooleanBinding validComputation = ConditionUtils.isNumber(srcA).and(ConditionUtils.isNumber(srcB));
     // A = base A + src A
-    NumberBinding dstA = Bindings.when(ConditionUtils.isNumber(srcA)).then(parseAndAdd.apply(srcA, baseA)).otherwise(0);
+    NumberBinding dstA = Bindings.when(ConditionUtils.isNumber(srcA)).then(parseAndAdd(srcA, baseA)).otherwise(0);
     // B = base B + src B
-    NumberBinding dstB = Bindings.when(ConditionUtils.isNumber(srcB)).then(parseAndAdd.apply(srcB, baseB)).otherwise(0);
+    NumberBinding dstB = Bindings.when(ConditionUtils.isNumber(srcB)).then(parseAndAdd(srcB, baseB)).otherwise(0);
     // result = A - B
     NumberBinding result = dstA.subtract(dstB);
     // success = A - B > 0 when A and B are valid numbers
@@ -346,7 +340,146 @@ public class CalculationBindingsTest {
     assertEquals(3, result.getValue().intValue());
 
     stopWatch.stop();
-    System.out.println("Duration - computation [high level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+    System.out.println("Duration - computation with string [high level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+
+  @Test
+  void computation_withString_lowLevel() {
+    int baseA = 5;
+    int baseB = 5;
+    int baseC = -5;
+    StringProperty srcA = new SimpleStringProperty();
+    StringProperty srcB = new SimpleStringProperty();
+
+    // src A and src B are valid numbers
+    BooleanBinding validComputation = new BooleanBinding() {
+      {
+        super.bind(srcA, srcB);
+      }
+      @Override
+      protected boolean computeValue() {
+        return StringUtils.isNumeric(srcA.getValue()) && StringUtils.isNumeric(srcB.getValue());
+      }
+    };
+
+    // A = base A + src A
+    // B = base B + src B
+    // result = A - B
+    IntegerBinding result = new IntegerBinding() {
+      {
+        super.bind(validComputation, srcA, srcB);
+      }
+      @Override
+      protected int computeValue() {
+        int numA = 0;
+        int numB = 0;
+        if (validComputation.get()) {
+          numA = Integer.parseInt(srcA.getValue()) + baseA;
+          numB = Integer.parseInt(srcB.getValue()) + baseB;
+
+        }
+        return numA - numB;
+      }
+    };
+
+    // success = A - B > 0 when A and B are valid numbers
+    BooleanBinding success = new BooleanBinding() {
+      {
+        super.bind(validComputation, result);
+      }
+      @Override
+      protected boolean computeValue() {
+        return validComputation.get() && result.intValue() > 0;
+      }
+    };
+
+    // final result = A - B + base C
+    IntegerBinding finalResult = new IntegerBinding() {
+      {
+        super.bind(success, result);
+      }
+      @Override
+      protected int computeValue() {
+        int num = success.get() ? result.intValue() + baseC: 0;
+        return num < 0 ? 1 : num;
+      }
+    };
+
+    assertFalse(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
+    srcA.setValue("10");
+    assertFalse(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("20");
+    assertTrue(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("7");
+    assertTrue(validComputation.get());
+    assertTrue(success.get());
+    assertEquals(1, finalResult.getValue());
+    assertEquals(3, result.getValue().intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation with string [low level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+
+  @Test
+  void computation_withString_reactfx() {
+    int baseA = 5;
+    int baseB = 5;
+    int baseC = -5;
+    StringProperty srcA = new SimpleStringProperty();
+    StringProperty srcB = new SimpleStringProperty();
+
+    // src A and src B are valid numbers
+    Val<Boolean> validComputation = Val.combine(ConditionUtils.isNumber(srcA), ConditionUtils.isNumber(srcB), (a, b) -> a && b);
+    // A = base A + src A
+    Val<Integer> dstA = validComputation.filter(Boolean.TRUE::equals).flatMap(b -> srcA).map(Integer::parseInt).map(n -> n + baseA).orElseConst(0);
+    // B = base B + src B
+    Val<Integer> dstB = validComputation.filter(Boolean.TRUE::equals).flatMap(b -> srcB).map(Integer::parseInt).map(n -> n + baseB).orElseConst(0);
+    // A - B
+    Val<Integer> result = Val.combine(dstA, dstB, Math::subtractExact).orElseConst(0);
+    // success = A - B
+    Val<Boolean> success = validComputation.filter(Boolean.TRUE::equals).flatMap(b -> result).map(n -> n > 0).orElseConst(false);
+    ObservableValue<Integer> finalResult = success.flatMap(b -> b ? result : null)
+                                                  .map(n -> n + baseC)
+                                                  .map(n -> n < 0 ? 1 : n)
+                                                  .orElseConst(0);
+
+    assertFalse(validComputation.getValue());
+    assertFalse(success.getValue());
+    assertEquals(0, finalResult.getValue());
+
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
+    srcA.setValue("10");
+    assertFalse(validComputation.getValue());
+    assertFalse(success.getValue());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("20");
+    assertTrue(validComputation.getValue());
+    assertFalse(success.getValue());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("7");
+    assertTrue(validComputation.getValue());
+    assertTrue(success.getValue());
+    assertEquals(1, finalResult.getValue());
+    assertEquals(3, result.getValue().intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation with string [reactfx level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
   }
   // endregion
 
@@ -385,6 +518,11 @@ public class CalculationBindingsTest {
   // endregion
 
   // region utils
+
+  private IntegerBinding parseAndAdd(ObservableStringValue property, Integer base) {
+    return Bindings.createIntegerBinding(() -> property.getValue() != null ? Integer.parseInt(property.getValue()) : 0, property).add(base);
+  }
+
   private static final class AddBaseIntBinding extends IntegerBinding {
 
     private final int base;
