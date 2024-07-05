@@ -288,12 +288,16 @@ public class CalculationBindingsTest {
   // region computation with string
 
   /**
+   * <pre>
+   * {@code
    * base A + integer property A = A
    * base B + integer property B = B
    * A - B > 0 = success
    * A - B + base C = D
    * success ? (D < 0 ? 1 : D) : 0 = result
    * output: {valid, success, result}
+   * }
+   * </pre>
   */
   @Test
   void computation_withString_highLevel() {
@@ -481,6 +485,77 @@ public class CalculationBindingsTest {
     stopWatch.stop();
     System.out.println("Duration - computation with string [reactfx level]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
   }
+
+  /**
+   * <pre>
+   * {@code
+   * base A + integer property A = A
+   * base B + integer property B = B
+   * A - B > 0 = success
+   * A - B + base C = D
+   * success ? (D < 0 ? 1 : D) : 0 = result
+   * output: {valid, success, result}
+   * }
+   * </pre>
+   */
+  @Test
+  void computation_withString_mix() {
+    int baseA = 5;
+    int baseB = 5;
+    int baseC = -5;
+    StringProperty srcA = new SimpleStringProperty();
+    StringProperty srcB = new SimpleStringProperty();
+
+    // src A and src B are valid numbers
+    BooleanBinding validComputation = ConditionUtils.isNumber(srcA).and(ConditionUtils.isNumber(srcB));
+    // A = base A + src A
+    IntegerBinding dstA = new ParseStringAddBaseBinding(baseA, srcA);
+    // B = base B + src B
+    IntegerBinding dstB = new ParseStringAddBaseBinding(baseB, srcB);
+    // result = A - B
+    NumberBinding result = dstA.subtract(dstB);
+    // success = A - B > 0 when A and B are valid numbers
+    BooleanBinding success = validComputation.and(result.greaterThan(0));
+    // final result = A - B + base C
+    IntegerBinding finalResult = new IntegerBinding() {
+      {
+        super.bind(success, result);
+      }
+      @Override
+      protected int computeValue() {
+        int num = success.get() ? result.intValue() + baseC: 0;
+        return num < 0 ? 1 : num;
+      }
+    };
+
+    assertFalse(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+
+    srcA.setValue("10");
+    assertFalse(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("20");
+    assertTrue(validComputation.get());
+    assertFalse(success.get());
+    assertEquals(0, finalResult.getValue());
+
+    srcB.setValue("7");
+    assertTrue(validComputation.get());
+    assertTrue(success.get());
+    assertEquals(1, finalResult.getValue());
+    assertEquals(3, result.getValue().intValue());
+
+    stopWatch.stop();
+    System.out.println("Duration - computation with string [mix]: " + stopWatch.getTime(TimeUnit.NANOSECONDS));
+  }
+
+
   // endregion
 
   // region When
@@ -537,6 +612,29 @@ public class CalculationBindingsTest {
     @Override
     protected int computeValue() {
       return base + src.getValue();
+    }
+  }
+
+  private static final class ParseStringAddBaseBinding extends IntegerBinding {
+
+    private final int base;
+    private final StringProperty src;
+
+    public ParseStringAddBaseBinding(int base, StringProperty src) {
+      this.base = base;
+      this.src = src;
+      super.bind(this.src);
+    }
+
+    @Override
+    protected int computeValue() {
+      int result;
+      try {
+        result = Integer.parseInt(src.getValue()) + base;
+      } catch (NumberFormatException e) {
+        result = 0;
+      }
+      return result;
     }
   }
 
